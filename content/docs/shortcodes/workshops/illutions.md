@@ -8,7 +8,7 @@ p5 `div` [shortcodes](https://gohugo.io/content-management/shortcodes/) embed [p
 
 All parameters are optional but `sketch`. Default values are shown in the above snippet but for `libs*`. Up to `lib5` libs may be specified.
 
-## Scintillating grid
+## Grid illutions
 
 Look at [this](https://mathworld.wolfram.com/ScintillatingGridIllusion.html) and also [this](https://www.illusionsindex.org/i/scintillating-grid) among many more references there are.
 
@@ -26,7 +26,9 @@ Look at [this](https://mathworld.wolfram.com/ScintillatingGridIllusion.html) and
 
 {{< p5-div sketch="/showcase/sketches/workshopEj3.js" >}}
 
-# p5-instance-div
+# Image kernel
+
+{{< p5-div sketch="/showcase/sketches/workshopEj4.js" >}}
 
 ```html
 {{</* p5-instance-div id="sketchid" ver="1.4.1" lib1="https://cdntolib1/lib1.js" >}}

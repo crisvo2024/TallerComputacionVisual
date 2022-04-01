@@ -10,16 +10,22 @@ new p5((p) => {
   
     p.draw = function () {
       p.background(0);
-      p.stroke(255, 251, 145); // dark grey colour for lines
+       // dark grey colour for lines
   
       var step = 25;
       //vertical lines
       for (var x = step; x < p.width; x = x + step) {
+        if(x%2===0){
+          p.stroke(255, 251, 145);
+        }else{
+          p.stroke(158,158,62);
+        }
         p.line(x, 0, x, p.height);
       }
   
       //horizontal lines
       for (var y = step; y < p.height; y = y + step) {
+        p.stroke(p.lerpColor(p.color(255, 251, 145),p.color(158,0,62),(p.height-y)/p.height));
         p.line(0, y, p.width, y);
       }
   

@@ -26,7 +26,21 @@ Look at [this](https://mathworld.wolfram.com/ScintillatingGridIllusion.html) and
 
 {{< p5-div sketch="/showcase/sketches/workshopEj3.js" >}}
 
-# Image kernel
+<!-- ------------------------- CONVOLUTION -------------------------------- -->
+# Masking
+
+### 1. Introduction
+
+### 2. Literature Review/Background
+
+### 3. Methods
+
+### 4. Results
+
+### 5. Discussion
+
+### 6. Conclusion
+
 
 {{< p5-div sketch="/showcase/sketches/workshopEj4.js" >}}
 
@@ -41,6 +55,8 @@ Note that the inline `sketch` should be coded in [p5 instance mode](https://gith
 {{< /hint >}}
 
 All parameters are optional but `id`. Default values are shown in the above snippet but for `libs*`. Up to `lib5` libs may be specified.
+
+<!-- --------------------------------------------------------- -->
 
 ## Lilac chaser
 

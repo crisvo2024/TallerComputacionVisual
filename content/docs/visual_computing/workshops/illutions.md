@@ -1,3 +1,7 @@
+# **Taller Ilusiónes**
+
+En este taller se exploraron dos lineas diferentes de ilusi[ones de computación visual, que aunque parecen diferentes inicialmente, ambas terminan siendo fundamentos que en conjunto dan forma al prosesamiento de imagenes en inteligencia artificial.
+
 # Grid illutions
 
 ### **1. Introducción**

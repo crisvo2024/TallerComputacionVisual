@@ -113,7 +113,7 @@ Para introducir la fórmula general de la operación de convolución primero ver
 164 & 188 & 164\\
 178 & 201 & 197\\
 174 & 168 & 181
-\end{bmatrix} \*
+\end{bmatrix} *
 \begin{bmatrix}
 0 & 1 & 0\\
 1 & 1 & 1\\
@@ -128,12 +128,12 @@ Sea _V_ el valor de salida del pixel, _C[i, j]_ el valor del píxel en dicha pos
 {{< katex display >}}
 V = ((C[3,3]*K[1,1])+(C[3,2]*K[1,2])+(C[3,1]*K[1,3])+(C[2,3]*K[2,1])+\\
 (C[2,2]*K[2,2]) + +(C[2,1]*K[2,3])+(C[1,3]*K[3,1])+(C[1,2]*K[3,2])+\\
-(C[1,1]\*K[3,3])) \div F
+(C[1,1]*K[3,3])) \div F
 {{< /katex >}}
 
 {{< katex display >}}
 V = ((181*0)+(168*1)+(174*0)+(197*1)+(201*1)+(178*1)+(164*0)+\\
-(188*1)+(164\*0)) \div 5
+(188*1)+(164*0)) \div 5
 {{< /katex >}}
 
 {{< katex display >}}
@@ -142,7 +142,7 @@ V = \frac{(168+197+201+178+188)}{5}=\frac{932}{5}=186.4
 
 Con este ejemplo ahora introducimos la fórmula general para la operación de convolución de imágenes:
 {{< katex display >}}
-V = |\frac{\sum*{i=1}^{m} \sum*{j=1}^{m} c*{(m-i)(n-j)} \* d*{(1+i)(1+j)}}{F}|
+V = |\frac{\sum{i=1}^{m} \sum*{j=1}^{m} c*{(m-i)(n-j)} * d*{(1+i)(1+j)}}{F}|
 {{< /katex >}}
 
 Otro concepto clave que será de utilidad para comprender el experimento realizado es el de histograma de una imagen. Tenemos que _“un histograma de una imagen es un tipo de histograma que actúa como representación gráfica de la distribución tonal en una imagen digital”_. El histograma de una imagen representa el número de píxeles de cada valor tonal donde el eje de abscisas (eje x) representa las variaciones tonales mientras que el eje de las ordenadas (eje y) representa el total de píxeles en ese tono específico. A modo de ejemplo observemos la siguiente imagen y su respectivo histograma:

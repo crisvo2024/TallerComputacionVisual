@@ -4,18 +4,22 @@ new p5((p) => {
   let handpose;
   let video;
   let hands = [];
-  let points = [];
+  let points = [p.createVector(0,0,0)];
   let cam;
+  let brush;
+  let popSicle;
+  let maxz = 0;
+  let saveIcon;
   p.setup = function () {
     console.log('ml5 version:', ml5.version);
     p.createCanvas(640, 480,p.WEBGL);
     // This makes a zoom in the camera without affecting the scale of points
-    cam = p.createCamera();
-    cam.move(0,0,-150)
+    // cam = p.createCamera();
+    // cam.move(0,0,-150)
     
     video = p.createCapture(p.VIDEO);
     video.size(p.width, p.height);
-    handpose = ml5.handpose(video, {maxContinuousChecks: 100},modelReady);
+    handpose = ml5.handpose(video, {flipHorizontal: true,},modelReady);
 
     // This sets up an event that fills the global variable "predictions"
     // with an array every time new hand poses are detected
@@ -25,48 +29,101 @@ new p5((p) => {
 
     // Hide the video element, and just show the canvas
     video.hide();
+    brush = p.loadModel('/showcase/sketches/brush2.stl');
     
+    popSicle = p.loadModel('/showcase/sketches/Popsicle.obj');
+
+    saveIcon = p.loadImage('/showcase/sketches/saveIcon.png')
   };
   function modelReady() {
     console.log("Model ready!");
   }
 
   p.draw = function () {
+    p.background(0);
     p.orbitControl();
     // Flips the camera horizontally
-    p.translate(p.width/2,-p.height/2,0);
-    p.scale(-1.0,1.0);
+    // p.translate(p.width/2,-p.height/2,0);
+    // p.scale(-1.0,1.0);
     // shows the video
-    p.image(video, 0, 0, p.width, p.height);
+    // if(p.beginHUD!=undefined){
+    //   p.beginHUD();
+    //   p.image(video, 0, 0, p.width, p.height);
+    //   p.endHUD();
+    // }
     
     
     for (let i = 0; i < points.length; i += 1){
       p.fill(255, 0, 0);
       p.noStroke();
-      p.ellipse(points[i][0], points[i][1], 10, 10);
+      // p.ellipse(points[i][0], points[i][1], 10, 10);
+      p.push();
+      p.translate(points[i].x, points[i].y,points[i].z);
+      // p.sphere(2);
+      p.scale(1.0,-1.0);
+      p.model(popSicle);
+      p.pop();
     }
     drawKeypoints();
     p.scale(1.5,1.5);
-    
+    if(p.beginHUD!=undefined){
+      p.beginHUD();
+      p.rect(10,10,50,50);
+      p.rect(10,70,50,50);
+      p.rect(10,130,50,50);
+      p.rect(10,190,50,50);
+      p.image(saveIcon,20,200,30,30)
+      p.endHUD();
+    }
   };
   function drawKeypoints() {
     for (let i = 0; i < hands.length; i += 1) {
       const hand = hands[i];
-      points.push(hand.annotations.indexFinger[hand.annotations.indexFinger.length-1])
+      let vec = p.createVector(
+        hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][0],
+        hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][1],
+        (hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][2]+100)/100
+        )
+        // console.log(vec.x)
+      // if(vec.x<80||vec.x>560||vec.y<80||vec.y>400)break;
+      let point =p.treeLocation(vec, { from: 'SCREEN', to: 'WORLD'})
+      
+      p.push();
+      p.fill(88, 50, 50);
+      p.translate(point.x, point.y,point.z);
+      // p.sphere(5);
+      p.scale(0.5,-0.5);
+      p.model(brush);
+      
+      p.pop();
+
+
+      // console.log(vec)
+      // console.log(point)
+      points.push(point)
+      // points.push(hand.annotations.indexFinger[hand.annotations.indexFinger.length-1])
       p.fill(0, 255, 0);
       p.noStroke();
       
       for (let j = 0; j < hand.landmarks.length; j += 1) {
         const keypoint = hand.landmarks[j];
+        maxz = (keypoint[2]+100)/100>maxz?(keypoint[2]+100)/100:maxz;
+        let handPoint = p.treeLocation([keypoint[0],keypoint[1],(keypoint[2]+100)/100],{ from: 'SCREEN', to: 'WORLD'});
+        // p.push();
+        // p.translate(handPoint.x, handPoint.y,handPoint.z);
+        // p.sphere(2);
+        // // p.model(brush)
+        // p.pop();
         
-        // p.ellipse(keypoint[0], keypoint[1], 10, 10);
-        p.ellipse(keypoint[0], keypoint[1],10,10);
+        // p.ellipse(keypoint[0], keypoint[1],10,10);
       }
-      p.stroke(51);
-      p.strokeWeight(4);
-      p.line(hand.annotations.indexFinger[0][0], hand.annotations.indexFinger[0][1],hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][0], hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][1]);
+      console.log(maxz);
+      // p.stroke(51);
+      // p.strokeWeight(4);
+      // p.line(hand.annotations.indexFinger[0][0], hand.annotations.indexFinger[0][1],hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][0], hand.annotations.indexFinger[hand.annotations.indexFinger.length-1][1]);
       
       
     }
+    hands = [];
   }
 }, "hermann-ml");

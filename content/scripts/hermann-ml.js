@@ -63,8 +63,14 @@ new p5((p) => {
       p.push();
       p.translate(points[i].position.x, points[i].position.y,points[i].position.z);
       // p.sphere(2);
-      p.scale(0.5,-0.5);
-      p.model(craneo);
+      p.scale(3.0,-3.0);  
+      p.ambientLight(60);
+      let locX = p.mouseX - p.width / 2;
+      let locY = p.mouseY - p.height / 2;
+      p.pointLight(255, 255, 255, locX, locY, 50);
+      p.specularMaterial(points[i].color);
+      p.shininess(50);
+      p.model(popSicle);
       p.pop();
     }
     drawKeypoints();

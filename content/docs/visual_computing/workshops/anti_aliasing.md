@@ -67,7 +67,7 @@ Finalmente se desarrolló un programa con el fin de aplicar distintos kernels o 
 A partir del estudio realizado se realizó un programa con el fin de presentar gráficamente el efecto de la operación de convolución en imágenes y analizar el cambio de las tonalidades de sus colores a través de su correspondiente histograma.
 
 <!-- {{< p5-div sketch="/showcase/scripts/anti_aliasing.js" >}} -->
-{{< p5-global-iframe id="AA" width="625" height="625" >}}
+{{< p5-global-iframe id="AA" width="625" height="625" lib1="/showcase/scripts/p5.quadrille.js">}}
     const ROWS = 20;
     const COLS = 20;
     const LENGTH = 20;

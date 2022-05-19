@@ -10,7 +10,7 @@ Las ilusiones de cuadrículas hacen referencia a cualquier tipo de cuadrícula q
 
 #### La ilusión de la cuadrícula de Hermann
 
-{{< p5-div sketch="/showcase/scripts/hermann-ml.js" >}}
+{{< p5-div sketch="/showcase/scripts/hermann-ml.js">}}
 
 #### La ilusión de la cuadrícula centelleante
 

@@ -4,12 +4,15 @@ new p5((p) => {
   let handpose;
   let video;
   let hands = [];
-  let points = [p.createVector(0,0,0)];
+  let points = [{position:p.createVector(0,0,0),color:p.color(0,255,0)}];
   let cam;
   let brush;
   let popSicle;
+  let craneo;
   let maxz = 0;
   let saveIcon;
+  let colors = [p.color(255,0,0),p.color(0,255,0),p.color(0,0,255)]
+  let currentColor = 0;
   p.setup = function () {
     console.log('ml5 version:', ml5.version);
     p.createCanvas(640, 480,p.WEBGL);
@@ -32,8 +35,8 @@ new p5((p) => {
     brush = p.loadModel('/showcase/sketches/brush2.stl');
     
     popSicle = p.loadModel('/showcase/sketches/Popsicle.obj');
-
-    saveIcon = p.loadImage('/showcase/sketches/saveIcon.png')
+    craneo = p.loadModel('/showcase/sketches/craneo.OBJ');
+    saveIcon = p.loadImage('/showcase/sketches/saveIcon.png');
   };
   function modelReady() {
     console.log("Model ready!");
@@ -54,14 +57,14 @@ new p5((p) => {
     
     
     for (let i = 0; i < points.length; i += 1){
-      p.fill(255, 0, 0);
+      p.fill(points[i].color);
       p.noStroke();
       // p.ellipse(points[i][0], points[i][1], 10, 10);
       p.push();
-      p.translate(points[i].x, points[i].y,points[i].z);
+      p.translate(points[i].position.x, points[i].position.y,points[i].position.z);
       // p.sphere(2);
-      p.scale(1.0,-1.0);
-      p.model(popSicle);
+      p.scale(0.5,-0.5);
+      p.model(craneo);
       p.pop();
     }
     drawKeypoints();
@@ -100,7 +103,7 @@ new p5((p) => {
 
       // console.log(vec)
       // console.log(point)
-      points.push(point)
+      points.push({position:point,color:colors[currentColor]})
       // points.push(hand.annotations.indexFinger[hand.annotations.indexFinger.length-1])
       p.fill(0, 255, 0);
       p.noStroke();

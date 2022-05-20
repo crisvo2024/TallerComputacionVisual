@@ -1,0 +1,172 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Taller Rasterización #  En este taller se estudió la técnica denominada anti-aliasing con la cual se busca disminuir la distorción en imágenes de alta resolución al ser presentadas en una resolución inferior.
+Anti-aliasing (AA) #  1. Introducción #  2. Revisión bibliográfica #  3. Métodos #  4. Resultados #         --       const ROWS = 100; const COLS = 100; const LENGTH = 5; let quadrille; let row0, col0, row1, col1, row2, col2; let min_row, min_col, max_row, max_col; let sub_quadrille; function setup() { createCanvas(COLS * LENGTH, ROWS * LENGTH); quadrille = createQuadrille(100, 100); // randomize(); // highlevel call: // quadrille."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content><meta property="og:description" content="Taller Rasterización #  En este taller se estudió la técnica denominada anti-aliasing con la cual se busca disminuir la distorción en imágenes de alta resolución al ser presentadas en una resolución inferior.
+Anti-aliasing (AA) #  1. Introducción #  2. Revisión bibliográfica #  3. Métodos #  4. Resultados #         --       const ROWS = 100; const COLS = 100; const LENGTH = 5; let quadrille; let row0, col0, row1, col1, row2, col2; let min_row, min_col, max_row, max_col; let sub_quadrille; function setup() { createCanvas(COLS * LENGTH, ROWS * LENGTH); quadrille = createQuadrille(100, 100); // randomize(); // highlevel call: // quadrille."><meta property="og:type" content="article"><meta property="og:url" content="https://visualcomputing.github.io/showcase/docs/visual_computing/workshops/anti_aliasing/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2022-05-19T21:59:05-05:00"><title>Anti Aliasing | Visual Computing</title><link rel=manifest href=/showcase/manifest.json><link rel=icon href=/showcase/favicon.png type=image/x-icon><link rel=stylesheet href=/showcase/book.min.ab46de3e725a6415339a37bba23a0067534a37289b063c9f8d011515a63097a8.css integrity="sha256-q0bePnJaZBUzmje7ojoAZ1NKNyibBjyfjQEVFaYwl6g=" crossorigin=anonymous><script defer src=/showcase/flexsearch.min.js></script>
+<script defer src=/showcase/en.search.min.7d721a459f3111f6f488500175acf36a456373634daaa7dfe90a8061db52f0c5.js integrity="sha256-fXIaRZ8xEfb0iFABdazzakVjc2NNqqff6QqAYdtS8MU=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/showcase/><span>Visual Computing</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li class=book-section-flat><span>Visual Computing</span><ul><li><a href=/showcase/docs/visual_computing/logs/>Logs</a></li><li><a href=/showcase/docs/visual_computing/profiles/>Profiles</a></li><li><input type=checkbox id=section-29bdbf19413e05c2e701868288e4ab17 class=toggle>
+<label for=section-29bdbf19413e05c2e701868288e4ab17 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/>Template Examples</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/buttons/>Buttons</a></li><li><a href=/showcase/docs/visual_computing/template_examples/columns/>Columns</a></li><li><a href=/showcase/docs/visual_computing/template_examples/details/>Details</a></li><li><a href=/showcase/docs/visual_computing/template_examples/expand/>Expand</a></li><li><a href=/showcase/docs/visual_computing/template_examples/hints/>Hints</a></li><li><a href=/showcase/docs/visual_computing/template_examples/katex/>Katex</a></li><li><a href=/showcase/docs/visual_computing/template_examples/mermaid/>Mermaid</a></li><li><input type=checkbox id=section-619959e653037cbeb27c2fc2f70843f1 class=toggle>
+<label for=section-619959e653037cbeb27c2fc2f70843f1 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/p5/>P5</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/p5/div/>Div</a></li><li><a href=/showcase/docs/visual_computing/template_examples/p5/iframe/>Iframe</a></li></ul></li><li><a href=/showcase/docs/visual_computing/template_examples/tabs/>Tabs</a></li></ul></li><li><input type=checkbox id=section-43decbbd35cace6c4f05150232266586 class=toggle checked>
+<label for=section-43decbbd35cace6c4f05150232266586 class="flex justify-between"><a href=/showcase/docs/visual_computing/workshops/>Workshops</a></label><ul><li><a href=/showcase/docs/visual_computing/workshops/anti_aliasing/ class=active>Anti Aliasing</a></li><li><a href=/showcase/docs/visual_computing/workshops/illutions/>Illutions</a></li><li><a href=/showcase/docs/visual_computing/workshops/main_spaces/>Main Spaces</a></li><li><a href=/showcase/docs/visual_computing/workshops/software_rendering/>Software Rendering</a></li></ul></li></ul></li></ul><ul><li><a href=/showcase/posts/>Blog</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/showcase/svg/menu.svg class=book-icon alt=Menu></label>
+<strong>Anti Aliasing</strong>
+<label for=toc-control><img src=/showcase/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#taller-rasterización><strong>Taller Rasterización</strong></a></li><li><a href=#anti-aliasing-aa>Anti-aliasing (AA)</a><ul><li><ul><li><a href=#1-introducción><strong>1. Introducción</strong></a></li><li><a href=#2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong></a></li><li><a href=#3-métodos><strong>3. Métodos</strong></a></li><li><a href=#4-resultados><strong>4. Resultados</strong></a></li><li><a href=#5-discusión><strong>5. Discusión</strong></a></li><li><a href=#6-conclusión><strong>6. Conclusión</strong></a></li><li><a href=#7-referencias><strong>7. Referencias</strong></a></li></ul></li></ul></li></ul></nav></aside></header><article class=markdown><h1 id=taller-rasterización><strong>Taller Rasterización</strong>
+<a class=anchor href=#taller-rasterizaci%c3%b3n>#</a></h1><p>En este taller se estudió la técnica denominada <strong>anti-aliasing</strong> con la cual se busca disminuir la distorción en imágenes de alta resolución al ser presentadas en una resolución inferior.</p><h1 id=anti-aliasing-aa>Anti-aliasing (AA)
+<a class=anchor href=#anti-aliasing-aa>#</a></h1><h3 id=1-introducción><strong>1. Introducción</strong>
+<a class=anchor href=#1-introducci%c3%b3n>#</a></h3><h3 id=2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong>
+<a class=anchor href=#2-revisi%c3%b3n-bibliogr%c3%a1fica>#</a></h3><h3 id=3-métodos><strong>3. Métodos</strong>
+<a class=anchor href=#3-m%c3%a9todos>#</a></h3><h3 id=4-resultados><strong>4. Resultados</strong>
+<a class=anchor href=#4-resultados>#</a></h3><iframe id=AA style=width:525px;height:525px srcdoc="
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js></script>
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/addons/p5.sound.min.js></script>
+             <script src=/showcase/scripts/p5.quadrille.js></script> 
+            
+            
+            
+            
+            <script>
+              
+    const ROWS = 100;
+    const COLS = 100;
+    const LENGTH = 5;
+    let quadrille;
+    let row0, col0, row1, col1, row2, col2;
+    let min_row, min_col, max_row, max_col;
+    let sub_quadrille;
+
+    function setup() {
+      createCanvas(COLS * LENGTH, ROWS * LENGTH);
+      quadrille = createQuadrille(100, 100);
+      // randomize();
+      // highlevel call:
+      // quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
+      // quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, 'red', 'green', 'blue');
+      quadrille.colorize('red', 'green', 'blue', 'cyan');
+    }
+
+    function draw() {
+      background('#f7f5f5');
+      drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'black', board: true });
+      tri();
+    }
+
+    function tri() {
+      push();
+      noStroke();
+      // stroke('black');
+      // strokeWeight(3);
+      noFill();
+      triangle(col0 * LENGTH + LENGTH / 2, row0 * LENGTH + LENGTH / 2, col1 * LENGTH + LENGTH / 2, row1 * LENGTH + LENGTH / 2, col2 * LENGTH + LENGTH / 2, row2 * LENGTH + LENGTH / 2);
+      pop();
+    }
+
+    function keyPressed() {
+      randomize();
+      if (key === 'r') {
+        quadrille.clear();
+        // low level call:
+        // [r, g, b, x, y]: rgb -> color components; x, y -> 2d normal
+        quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
+        applyAA();
+      }
+      
+      /*if (key === 's') {
+        quadrille.clear();
+        quadrille.rasterize(colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8], [255, 255, 0, -1, -10]);
+      }*/
+
+      /*if (key === 'a') {
+        applyAA();
+      }*/
+
+      /*
+      if (key === 't') {
+        quadrille.clear(5, 5);
+        quadrille.fill(6, 6, color('cyan'));
+      }
+      */
+    }
+
+    // pretty similar to what p5.Quadrille.colorizeTriangle does
+    function colorize_shader({ pattern: mixin }) {
+      let rgb = mixin.slice(0, 3);
+      // debug 2d normal
+      // console.log(mixin.slice(3));
+      // use interpolated color as is
+      return color(rgb);
+    }
+
+    function randomize() {
+      col0 = int(random(0, COLS));
+      row0 = int(random(0, ROWS));
+      col1 = int(random(0, COLS));
+      row1 = int(random(0, ROWS));
+      col2 = int(random(0, COLS));
+      row2 = int(random(0, ROWS));
+    }
+
+    function applyAA() {
+      min_row = min(row0, row1, row2);
+      max_row = max(row0, row1, row2);
+      min_col = min(col0, col1, col2);
+      max_col = max(col0, col1, col2);
+
+      grid = quadrille.memory2D;
+
+      /*for (let i = min_row; i <= max_row; i++) {
+        for (let j = min_col; j <= max_col; j++) {
+          if (grid[i][j] != 0) {
+            grid[i][j] = color(255, 204, 0);
+          }
+        }
+      }*/
+
+      for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+          if (grid[i][j] != 0) {
+            sum = 0;
+            for (let k = i; k < 1 + i; k += 0.1){
+              for (let t = j; t < 1 + j; t += 0.1){
+                let coords = barycentric_coords(k, t, row0, col0, row1, col1, row2, col2);
+                if (!(coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0)) {
+                 sum += 255;
+                }
+              } 
+            }
+            //console.log(sum);
+            grid[i][j] = color(sum/100);
+          }
+        }
+      }
+
+      quadrille.memory2D = grid;
+    }
+
+  function barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
+    let edges = edge_functions(row, col, row0, col0, row1, col1, row2, col2);
+    let area = parallelogram_area(row0, col0, row1, col1, row2, col2);
+    return { w0: edges.e12 / area, w1: edges.e20 / area, w2: edges.e01 / area };
+  }
+
+  function parallelogram_area(row0, col0, row1, col1, row2, col2) {
+    return (col1 - col0) * (row2 - row0) - (col2 - col0) * (row1 - row0);
+  }
+
+  function edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
+    let e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
+    let e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
+    let e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
+    return { e01, e12, e20 };
+  }
+
+
+            </script>
+          </head>
+          <body>
+          </body>
+        </html>
+      "></iframe><h3 id=5-discusión><strong>5. Discusión</strong>
+<a class=anchor href=#5-discusi%c3%b3n>#</a></h3><h3 id=6-conclusión><strong>6. Conclusión</strong>
+<a class=anchor href=#6-conclusi%c3%b3n>#</a></h3><ol><li>La convolución es una operación matématica utilizada en varios campos de estudio (por ejemplo en señales y comunicaciones) y en el procesamiento de imágenes juega un papel importante en distintas implementaciones como filtros en aplicaciones, reconocimiento facial, entre otros.</li><li>Los histogramas de imágenes son herrmientas útiles para el análisis de tonalidades de los colores ya que permiten evidenciar de manera clara características de la imagen como si existen tonos apagados, sombras o zonas oscuras, si la imagen esta en contraluz, etc.</li></ol><h3 id=7-referencias><strong>7. Referencias</strong>
+<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://en.wikipedia.org/wiki/Kernel_%28image_processing%29>Kernel (image processing)</a></li><li><a href=http://web.pdx.edu/~jduh/courses/Archive/geog481w07/Students/Ludwig_ImageConvolution.pdf>Image convolution - Jamie Ludwig - Portland State University</a></li><li><a href=http://www.thewebfoto.com/2-hacer-fotos/217-el-histograma>El histograma</a></li><li><a href=https://en.wikipedia.org/wiki/Image_histogram>Image histogram</a></li><li><a href="https://www.youtube.com/watch?v=BQyMZ0caFbg">Applications of Convolution in Image Processing)</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/88137b98011f50352ca87c1b8979556ab25eb044 title="Last modified by Juan Esteban Rozo Urbina | May 20, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
+<span>May 20, 2022</span></a></div></div><script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#taller-rasterización><strong>Taller Rasterización</strong></a></li><li><a href=#anti-aliasing-aa>Anti-aliasing (AA)</a><ul><li><ul><li><a href=#1-introducción><strong>1. Introducción</strong></a></li><li><a href=#2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong></a></li><li><a href=#3-métodos><strong>3. Métodos</strong></a></li><li><a href=#4-resultados><strong>4. Resultados</strong></a></li><li><a href=#5-discusión><strong>5. Discusión</strong></a></li><li><a href=#6-conclusión><strong>6. Conclusión</strong></a></li><li><a href=#7-referencias><strong>7. Referencias</strong></a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>

@@ -6,94 +6,48 @@ En este taller se estudió la técnica denominada **anti-aliasing** con la cual 
 
 ### **1. Introducción**
 
-El masking juega un papel muy importante dentro del campo del procesamiento de imágenes ya que a través de una operación de convolución entre el kernel (matriz) y la imagen es posible aplicar efectos de desenfoque (**blur**), nitidez (**sharpening**), relieve (**embossing**), detección de bordes (**edge detection**), etc. De este hecho nace el propósito de este reporte de analizar el proceso de convolución de imágenes de tal manera que se realice un recorrido por cada uno de los conceptos que lo describen con la finalidad de obtener un panorama general. Se iniciará llevando a cabo una revisión de la bibliografía relacionada con el tema, posteriormente se realizará una descripción de la metodología utilizada para llevar a cabo el experimento, a continuación se analizarán los resultados obtenidos del experimento, luego se discutirán dichos resultados y finalmente se postularán las conclusiones del estudio.
+
 
 ### **2. Revisión bibliográfica**
 
-Empezaremos definiendo la convolución de imágenes como un filtro de propósito general para imágenes que consiste en determinar el valor del color de un píxel central como la suma de los valores de color ponderados de sus vecinos o píxeles adyacentes con el fin de obtener como salida la imagen modificada con el filtro. Por otro lado, definiremos un **kernel** como una matriz de números que es usada para realizar la convolución y que de acuerdo a los valores que esta contenga se van a producir distintos resultados para una misma imagen.
-
-Para introducir la fórmula general de la operación de convolución primero veremos un ejemplo:
-{{< katex display >}}
-\begin{bmatrix}
-164 & 188 & 164\\
-178 & 201 & 197\\
-174 & 168 & 181
-\end{bmatrix} *
-\begin{bmatrix}
-0 & 1 & 0\\
-1 & 1 & 1\\
-0 & 1 & 0
-\end{bmatrix}
-{{< /katex >}}
-
-De aquí se quiere determinar el valor del pixel del medio, es decir, el pixel que tiene el valor actual de 201. Para determinar el nuevo valor del píxel se realizan las siguientes operaciones:
-
-Sea _V_ el valor de salida del pixel, _C[i, j]_ el valor del píxel en dicha posición de la matriz, _K[i, j]_ el valor del kernel en esa posición y _F_ la suma de de los coeficientes del kernel o 1 si la suma de los coeficientes es 0, entonces
-
-{{< katex display >}}
-V = ((C[3,3]*K[1,1])+(C[3,2]*K[1,2])+(C[3,1]*K[1,3])+(C[2,3]*K[2,1])+\\
-(C[2,2]*K[2,2]) + +(C[2,1]*K[2,3])+(C[1,3]*K[3,1])+(C[1,2]*K[3,2])+\\
-(C[1,1]*K[3,3])) \div F
-{{< /katex >}}
-
-{{< katex display >}}
-V = ((181*0)+(168*1)+(174*0)+(197*1)+(201*1)+(178*1)+(164*0)+\\
-(188*1)+(164*0)) \div 5
-{{< /katex >}}
-
-{{< katex display >}}
-V = \frac{(168+197+201+178+188)}{5}=\frac{932}{5}=186.4
-{{< /katex >}}
-
-Con este ejemplo ahora introducimos la fórmula general para la operación de convolución de imágenes:
-{{< katex display >}}
-V = |\frac{\sum{i=1}^{m} \sum*{j=1}^{m} c*{(m-i)(n-j)} * d*{(1+i)(1+j)}}{F}|
-{{< /katex >}}
-
-Otro concepto clave que será de utilidad para comprender el experimento realizado es el de histograma de una imagen. Tenemos que _“un histograma de una imagen es un tipo de histograma que actúa como representación gráfica de la distribución tonal en una imagen digital”_. El histograma de una imagen representa el número de píxeles de cada valor tonal donde el eje de abscisas (eje x) representa las variaciones tonales mientras que el eje de las ordenadas (eje y) representa el total de píxeles en ese tono específico. A modo de ejemplo observemos la siguiente imagen y su respectivo histograma:
-
-![Histograma de una paisaje oscuro.](/showcase/sketches/histograma01.jpg "Paisaje oscuro")
-
-Del histograma tenemos que el eje de absisas indica los distitntos tonos de gris desde el negro al blanco (de izquierda a derecha). A partir de lo anterior podemos inferir que se trata de una imagen con tonos apagados, es decir, que la imagen está oscura ya que la gráfica tiende a estar sobre la parte izquierda mientras que en la parte derecha no existe información y en el caso que hubiera muchas zonas de color negro entonces la grafica seria un pico ubicado en la parte izquierda.
 
 ### **3. Métodos**
 
-Para llevar a cabo este ejercicio académico se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática de convolución aplicado en el procesamiento de imágenes. De esta manera se investigaron distintas fuentes de información debidamente citadas de las cuales se extrajeron ideas generales acerca de conceptos clave como la operación de convolución en imágenes y los histogramas de imágenes para poder analizar el resultados de las convoluciones realizadas.
 
-Finalmente se desarrolló un programa con el fin de aplicar distintos kernels o matrices en la operación de convolución y de esta manera verificar la operación en la imagen y además analizar su histograma.
 
 ### **4. Resultados**
 
-A partir del estudio realizado se realizó un programa con el fin de presentar gráficamente el efecto de la operación de convolución en imágenes y analizar el cambio de las tonalidades de sus colores a través de su correspondiente histograma.
-
 <!-- {{< p5-div sketch="/showcase/scripts/anti_aliasing.js" >}} -->
-{{< p5-global-iframe id="AA" width="625" height="625" lib1="/showcase/scripts/p5.quadrille.js">}}
-    const ROWS = 20;
-    const COLS = 20;
-    const LENGTH = 20;
+{{< p5-global-iframe id="AA" width="525" height="525" lib1="/showcase/scripts/p5.quadrille.js">}}
+    const ROWS = 100;
+    const COLS = 100;
+    const LENGTH = 5;
     let quadrille;
     let row0, col0, row1, col1, row2, col2;
+    let min_row, min_col, max_row, max_col;
+    let sub_quadrille;
 
     function setup() {
       createCanvas(COLS * LENGTH, ROWS * LENGTH);
-      quadrille = createQuadrille(20, 20);
-      //randomize();
+      quadrille = createQuadrille(100, 100);
+      // randomize();
       // highlevel call:
-      //quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
-      //quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, 'red', 'green', 'blue');
+      // quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
+      // quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, 'red', 'green', 'blue');
       quadrille.colorize('red', 'green', 'blue', 'cyan');
     }
 
     function draw() {
-      background('#060621');
-      drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'green', board: true });
+      background('#f7f5f5');
+      drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'black', board: true });
       tri();
     }
 
     function tri() {
       push();
-      stroke('cyan');
-      strokeWeight(3);
+      noStroke();
+      // stroke('black');
+      // strokeWeight(3);
       noFill();
       triangle(col0 * LENGTH + LENGTH / 2, row0 * LENGTH + LENGTH / 2, col1 * LENGTH + LENGTH / 2, row1 * LENGTH + LENGTH / 2, col2 * LENGTH + LENGTH / 2, row2 * LENGTH + LENGTH / 2);
       pop();
@@ -101,15 +55,23 @@ A partir del estudio realizado se realizó un programa con el fin de presentar g
 
     function keyPressed() {
       randomize();
-      quadrille.clear();
       if (key === 'r') {
+        quadrille.clear();
         // low level call:
         // [r, g, b, x, y]: rgb -> color components; x, y -> 2d normal
-        quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
+        quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
+        applyAA();
       }
-      if (key === 's') {
+      
+      /*if (key === 's') {
+        quadrille.clear();
         quadrille.rasterize(colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8], [255, 255, 0, -1, -10]);
-      }
+      }*/
+
+      /*if (key === 'a') {
+        applyAA();
+      }*/
+
       /*
       if (key === 't') {
         quadrille.clear(5, 5);
@@ -122,7 +84,7 @@ A partir del estudio realizado se realizó un programa con el fin de presentar g
     function colorize_shader({ pattern: mixin }) {
       let rgb = mixin.slice(0, 3);
       // debug 2d normal
-      console.log(mixin.slice(3));
+      // console.log(mixin.slice(3));
       // use interpolated color as is
       return color(rgb);
     }
@@ -135,21 +97,65 @@ A partir del estudio realizado se realizó un programa con el fin de presentar g
       col2 = int(random(0, COLS));
       row2 = int(random(0, ROWS));
     }
+
+    function applyAA() {
+      min_row = min(row0, row1, row2);
+      max_row = max(row0, row1, row2);
+      min_col = min(col0, col1, col2);
+      max_col = max(col0, col1, col2);
+
+      grid = quadrille.memory2D;
+
+      /*for (let i = min_row; i <= max_row; i++) {
+        for (let j = min_col; j <= max_col; j++) {
+          if (grid[i][j] != 0) {
+            grid[i][j] = color(255, 204, 0);
+          }
+        }
+      }*/
+
+      for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+          if (grid[i][j] != 0) {
+            sum = 0;
+            for (let k = i; k < 1 + i; k += 0.1){
+              for (let t = j; t < 1 + j; t += 0.1){
+                let coords = barycentric_coords(k, t, row0, col0, row1, col1, row2, col2);
+                if (!(coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0)) {
+                 sum += 255;
+                }
+              } 
+            }
+            //console.log(sum);
+            grid[i][j] = color(sum/100);
+          }
+        }
+      }
+
+      quadrille.memory2D = grid;
+    }
+
+  function barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
+    let edges = edge_functions(row, col, row0, col0, row1, col1, row2, col2);
+    let area = parallelogram_area(row0, col0, row1, col1, row2, col2);
+    return { w0: edges.e12 / area, w1: edges.e20 / area, w2: edges.e01 / area };
+  }
+
+  function parallelogram_area(row0, col0, row1, col1, row2, col2) {
+    return (col1 - col0) * (row2 - row0) - (col2 - col0) * (row1 - row0);
+  }
+
+  function edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
+    let e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
+    let e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
+    let e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
+    return { e01, e12, e20 };
+  }
+
 {{< /p5-global-iframe >}}
 
 ### **5. Discusión**
 
-El programa permite ingresar los valores del kernel y posteriormente aplicar la operación al oprimir el botón **apply**. Un ejercicio simple pero ilustrativo es establecer todos los valores de la matriz en cero pero únicamente el valor del medio se puede ir variando por ejemplo de 0 a 2 en intervalos de 0.1, esto con el fin de aplicar un efecto que permite oscurecer o aumentar el brillo de la imagen.
-
-{{< hint info >}}
-**Cambio en las tonalidades**
-
-- Si el valor que se estabece está entre [0,1) entonces la imagen se verá más oscura. <br>
-- Si el valor que se estabece es 1 entonces la imagen no cambiará la tonalidad de sus colores. <br>
-- Si el valor que se estabece está entre (1,2] entonces la imagen se verá con más brillo.
-  {{< /hint >}}
-
-Es lógico pensar que si el valor que se toma es 1 entonces el resultado de la operación de convolución para cada píxel será el mismo color que se tenía ya que se está multiplicado únicamente ese valor por 1 y los demás por 0. Así mismo, la analogía aplicaría igual si el valor es menor o mayor 1 para oscurecer o aumentar el brillo en la imagen respectivamente.
 
 ### **6. Conclusión**
 

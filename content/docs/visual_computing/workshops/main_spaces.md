@@ -14,7 +14,7 @@ Las ilusiones de cuadrículas hacen referencia a cualquier tipo de cuadrícula q
 
 #### La ilusión de la cuadrícula centelleante
 
-{{< p5-div sketch="/showcase/sketches/scintillating.js" >}}
+
 
 A partir de lo visto en estas ilusiones, nace la idea de explorar las posibilidades de estos tipos de ilusiones, así como los fundamentos de porqué logran engañar nuestra visión.Iniciaremos realizando una exploración bibliográfica, para después describir el método utilizado para experimentar con variaciones de las ilusiones de cuadrícula y finalmente mostrar y analizar los resultados obtenidos, junto con las conclusiones obtenidas a partir de ellos.
 
@@ -44,7 +44,7 @@ El tono de dos piezas de color parece más diferente cuando se observan yuxtapue
 
 Una demostración de este fenomeno en el ambito de la luminosidad es la siguiente imagen:
 
-{{< p5-div sketch="/showcase/sketches/contraste-simultaneo.js" >}}
+
 
 Los dos cuadrados, uno encima del otro, en la zona de la derecha tienen la misma luminancia,
 y aparecen tan claros uno y otro, ya que se ven sobre el mismo fondo claro.
@@ -69,11 +69,6 @@ Para llevar a cabo este ejercicio académico se llevó a cabo en primer lugar un
 
 A partir de la experimentación se llego a estos efectos:
 
-{{< p5-div sketch="/showcase/sketches/workshopEj1.js" >}}
-
-{{< p5-div sketch="/showcase/sketches/workshopEj2.js" >}}
-
-{{< p5-div sketch="/showcase/sketches/workshopEj3.js" >}}
 
 ### **5. Discusión**
 
@@ -161,7 +156,7 @@ Finalmente se desarrolló un programa con el fin de aplicar distintos kernels o 
 
 A partir del estudio realizado se realizó un programa con el fin de presentar gráficamente el efecto de la operación de convolución en imágenes y analizar el cambio de las tonalidades de sus colores a través de su correspondiente histograma.
 
-{{< p5-div sketch="/showcase/sketches/workshopEj4.js" >}}
+
 
 ### **5. Discusión**
 

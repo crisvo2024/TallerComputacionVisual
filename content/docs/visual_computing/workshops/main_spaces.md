@@ -56,6 +56,63 @@ Estas operaciones son derivadas del escalamiento, en el caso de la proyección s
 
 finalmente todas estas transformaciones se pueden concatenar multiplicando sus matrices respectivas en el orden en el que se desean aplicar las transformaciones. 
 
+#### Transformaciones Afines
+
+Todas las transformaciones vistas anteriormente se realizan con relación a un eje que pasa por el origen, sin emabrgo, esto no es siempre lo que se desea. Las transformaciones afines introducen la traslación, siendo definidas como una transformación lineal seguida por una traslación, es por esto que se considera a las transformaciones lineales como un subconjunto de las transformaciones afines. Cualquier transformación {{< katex >}} v' = vM + b {{< /katex >}} es una transformación afin.
+
+Para poder realizar cualquier traslación ya una matriz de 3x3 no es suficiente, es por eso que se utiliza una notación de matrices extendidas de 4x4 equivalentes a las matrices ya vistas, pero con una conluma y fila añadidas, en un eje llamado comunmente w esto se ve reprecentado en la siguiente operación:
+
+{{< katex display >}}
+\begin{bmatrix}
+x & y & z & 1 
+\end{bmatrix}
+\begin{bmatrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & 0\\
+\Delta x & \Delta y & \Delta z & 1
+\end{bmatrix} = 
+\begin{bmatrix}
+x + \Delta x & y + \Delta y & z + \Delta z & 1
+\end{bmatrix}
+{{< /katex >}}
+
+Esto nos muestra exactamente como se aplica una traslación sobre la matriz de 4x4. 
+En transformación afin, en donde se realiza una transformación linearl R y una traslación T
+
+{{< katex display >}}
+R = 
+\begin{bmatrix}
+r_11 & r_12 & r_13 & 0\\ 
+r_21 & r_22 & r_23 & 0\\ 
+r_31 & r_32 & r_33 & 0\\ 
+0 & 0 & 0 & 1\\
+\end{bmatrix} 
+T = 
+\begin{bmatrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & 0\\
+\Delta x & \Delta y & \Delta z & 1
+\end{bmatrix} 
+{{< /katex >}}
+Es posible calcular un punto {{< katex >}} v'{{< /katex >}} a partir del punto {{< katex >}} v{{< /katex >}} de la siguiente forma:
+{{< katex display>}} 
+v' = vRT 
+{{< /katex >}}
+{{< katex display>}} 
+
+Lo cual finalmente nos permite definir la matriz de una transformación afin como:
+\begin{bmatrix}
+r_11 & r_12 & r_13 & 0\\ 
+r_21 & r_22 & r_23 & 0\\ 
+r_31 & r_32 & r_33 & 0\\ 
+\Delta x & \Delta y & \Delta z & 1
+\end{bmatrix} 
+{{< /katex >}}
+Ya con esta herramienta es posible realizar la cualquier tipo de rotación, reflexión, proyección o escalamiento sobre un eje que no pase por el origen, permitiendo una infinidad de operaciones en el espacio
+
+
 
 
 ### **3. Métodos**
@@ -72,8 +129,8 @@ Es interesante todas las transformaciones que se dan detras de este pincel, se p
 Una extensión de este proyecto se podría dar mejorando el modelo de machine learning que se usa para la detección de la mano, esto con el objetivo de permitir el reconocimiento de dos manos o mejorar la precisión de la aproximación del eje Z la cual no es muy estable y es propensa a errores. tambien se podría permitir al usuario cargar sus propios pinceles y controlar la interfaz con solo gestos, sin embargo, esto ultimo estaría atado a mejorar el modelo incluyento la capasidad de detectar las 2 manos y diferenciarlas, o de un cambio en la forma de captar los movimientos y gestos.
 ### **6. Conclusión**
 
-1. Nuestra vista es muy susceptible a los efectos visuales, en los cuales se usan cambios en el color frente a colores estáticos, esto que en su momento representó una ventaja evolutiva del ojo que nos permitió sobrevivir, es también lo que hace que no veamos el mundo exactamente como es.
-2. En este tipo de efectos visuales, es mejor hacer combinaciones más simples, esto permite engañar la vista más fácilmente, a diferencia de cuando hacemos uso de muchos colores y efectos, casos en los que la ilusión se puede romper mucho más fácilmente.
+1. A pesar de que la inteligencia artificial ya permite obtener mucha información a partir de imagenes es realmente complejo el realizar un mapero de profundidad a partir de esto, sin embargo a medida que avanza esta disiplina es posible que llege a proveer resultados lo suficientemente buenos para casos de usos como el de este pincel 3D
+2. A partir de las transformaciones afines es posible llegar a reprecentar matematicamente todo tipo de escenarios 3D y transformarlos de una forma ordenada, la cual permite abstraer toda la logica para poderse sentrar en la composición sin tener que preocuparse por todas las matematicas que soportan esto. 
 
 ### **7. Referencias**
 

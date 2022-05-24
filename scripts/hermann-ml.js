@@ -77,6 +77,9 @@ new p5((p) => {
   p.draw = function () {
     p.background(0);
     p.orbitControl();
+    p.stroke(50,70,30);
+    p.grid({dotted:false});
+    p.axes();
     p.noStroke();
     for (let i = 0; i < points.length; i += 1){
       p.fill(p.color(points[i].color[0],points[i].color[1],points[i].color[2]));      

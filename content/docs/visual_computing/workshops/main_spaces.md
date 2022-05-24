@@ -117,7 +117,7 @@ Ya con esta herramienta es posible realizar la cualquier tipo de rotación, refl
 
 ### **3. Métodos**
 
-Con la intención de mostrar la manipulación de objetos en 3D se implementa el pincel 3D, aprovechando la libreria de inteligencia artificial ML5.js, la cual posee un modelo preentrenado que permite hacer el reconocimiento de manos con base en los fotogramas de un video, este modelo ubica los diferentes puntos de la mano en un sistema de coordenadas con relación al video, pero que tambien incluye un eje Z con una aproximación de la profundidad.Para el pincel se decidio que el usuario pinte con la punta del dedo indice. Este pincel 3D dispone de 5 botonoes, uno para intercambiar el pincel que se usa, el cual se puede ser un conejo, una calavera o una paleta. El segundo boton permirte cambiar el color con el que se pinta. El tercer boton permite habilitar o deshabilitar el pincel. Finalmente los ultimos dos botones permiten exportar e importar respectivamente un dibujo en un archivo JSON. Adicionalmetente y como ayuda para el usuario se muestra en la esquina inferior la imagen de la camara y en la pantalla se muestra en todo momento la posición del pincel.
+Con la intención de mostrar la manipulación de objetos en 3D se implementa el pincel 3D, aprovechando la libreria de inteligencia artificial ML5.js, la cual posee un modelo preentrenado que permite hacer el reconocimiento de manos con base en los fotogramas de un video, este modelo ubica 20 puntos de la mano en un sistema de coordenadas con relación al video, pero que tambien incluye un eje Z con una aproximación de la profundidad.Para el pincel se decidio que el usuario pinte con la punta del dedo indice. Este pincel 3D dispone de 5 botonoes, uno para intercambiar el pincel que se usa, el cual se puede ser un conejo, una calavera o una paleta. El segundo boton permirte cambiar el color con el que se pinta. El tercer boton permite habilitar o deshabilitar el pincel. Finalmente los ultimos dos botones permiten exportar e importar respectivamente un dibujo en un archivo JSON. Adicionalmetente y como ayuda para el usuario se muestra en la esquina inferior la imagen de la camara y en la pantalla se muestra en todo momento la posición del pincel.
 
 {{< p5-div sketch="/showcase/scripts/hermann-ml.js">}}
 
@@ -134,7 +134,6 @@ Una extensión de este proyecto se podría dar mejorando el modelo de machine le
 
 ### **7. Referencias**
 
-- [Inhibición lateral: la supresión de neuronas mejora la percepción sensorial](https://www.greelane.com/es/ciencia-tecnolog%c3%ada-matem%c3%a1ticas/ciencia/lateral-inhibition-4687368/)
-- [Inhibición lateral](https://en.wikipedia.org/wiki/Lateral_inhibition)
-- [El contraste simultáneo](https://agrega.juntadeandalucia.es/repositorio/23112016/f8/es-an_2016112312_9101414/21_luz_y_color_el_contraste_simultneo.html)
-- [Ley del contraste simultáneo de los colores](https://es.wikipedia.org/wiki/Ley_del_contraste_simult%C3%A1neo_de_los_colores#cite_note-7)
+- [3D Math Primer for Graphics and Game Development](https://tfetimes.com/wp-content/uploads/2015/04/F.Dunn-I.Parberry-3D-Math-Primer-for-Graphics-and-Game-Development.pdf)
+- [Handpose](https://learn.ml5js.org/#/reference/handpose)
+

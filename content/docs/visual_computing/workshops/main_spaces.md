@@ -110,7 +110,7 @@ r_31 & r_32 & r_33 & 0\\
 \Delta x & \Delta y & \Delta z & 1
 \end{bmatrix} 
 {{< /katex >}}
-Ya con esta herramienta es posible realizar la cualquier tipo de rotación, reflexión, proyección o escalamiento sobre un eje que no pase por el origen, permitiendo una infinidad de operaciones en el espacio
+Ya con esta herramienta es posible realizar la cualquier tipo de rotación, reflexión, proyección o escalamiento sobre un eje que no pase por el origen, permitiendo una infinidad de operaciones en el espacio incluidas las necesarías para visualizar y manipular desde distintos puntos una escena, ya sea desde un ojo o camara, en el mundo o en sus espacios intermedios.
 
 
 

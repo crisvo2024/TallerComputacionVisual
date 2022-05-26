@@ -100,9 +100,10 @@ Es posible calcular un punto {{< katex >}} v'{{< /katex >}} a partir del punto {
 {{< katex display>}} 
 v' = vRT 
 {{< /katex >}}
-{{< katex display>}} 
+
 
 Lo cual finalmente nos permite definir la matriz de una transformación afin como:
+{{< katex display>}} 
 \begin{bmatrix}
 r_11 & r_12 & r_13 & 0\\ 
 r_21 & r_22 & r_23 & 0\\ 

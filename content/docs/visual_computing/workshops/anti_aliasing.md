@@ -103,83 +103,81 @@ Finalmente se desarrolló un programa a partir de un ejemplo de rasterización d
 
 A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del anti-aliasing sobre un triángulo rasterizado.
 
-<!-- {{< p5-div sketch="/showcase/scripts/anti_aliasing.js" >}} -->
-{{< p5-global-iframe id="AA" width="525" height="525" lib1="/showcase/scripts/p5.quadrille.js">}}
-    const ROWS = 100;
-    const COLS = 100;
-    const LENGTH = 5;
-    let quadrille;
-    let row0, col0, row1, col1, row2, col2;
-    let min_row, min_col, max_row, max_col;
-    let sub_quadrille;
+{{< details title="p5 - anti-aliasing code" open=false >}}
+```js
+{{</* p5-global-iframe id="breath" width="625" height="625" >}}
+  const ROWS = 100;
+  const COLS = 100;
+  const LENGTH = 5;
+  let quadrille;
+  let row0, col0, row1, col1, row2, col2;
+  let original_quadrille;
 
-    function setup() {
-      createCanvas(COLS * LENGTH, ROWS * LENGTH);
-      quadrille = createQuadrille(200, 200);
-      quadrille.colorize('red', 'green', 'blue', 'cyan');
-    }
+  function setup() {
+    createCanvas(COLS * LENGTH, ROWS * LENGTH);
+    quadrille = createQuadrille(200, 200);
+    quadrille.colorize('red', 'green', 'blue', 'cyan');
+  }
 
-    function draw() {
-      background('#f7f5f5');
-      drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'black', board: true });
-      tri();
-    }
+  function draw() {
+    background('#f7f5f5');
+    drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'black', board: true });
+  }
 
-    function tri() {
-      push();
-      noStroke();
-      // stroke('black');
-      // strokeWeight(1);
-      noFill();
-      triangle(col0 * LENGTH + LENGTH / 2, row0 * LENGTH + LENGTH / 2, col1 * LENGTH + LENGTH / 2, row1 * LENGTH + LENGTH / 2, col2 * LENGTH + LENGTH / 2, row2 * LENGTH + LENGTH / 2);
-      pop();
-    }
-
-    function keyPressed() {
+  function keyPressed() {
+    if (key === 'r') { // Rasterize the triangle
       randomize();
-      if (key === 'r') {
-        quadrille.clear();
-        quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
-        applyAA();
-      }
+      quadrille.clear();
+      quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
+      original_quadrille = quadrille.memory2D;
     }
 
-    function colorize_shader({ pattern: mixin }) {
-      let rgb = mixin.slice(0, 3);
-      return color(rgb);
+    if (key === 'a') { // Apply anti-aliasing
+      applyAA();
     }
 
-    function randomize() {
-      col0 = int(random(0, COLS));
-      row0 = int(random(0, ROWS));
-      col1 = int(random(0, COLS));
-      row1 = int(random(0, ROWS));
-      col2 = int(random(0, COLS));
-      row2 = int(random(0, ROWS));
+    if (key === 's') { // Remove anti-aliasing
+      quadrille.memory2D = original_quadrille;
     }
 
-    function applyAA() {
-      grid = quadrille.memory2D;
+  }
 
-      for (let i = 0; i < ROWS; i++) {
-        for (let j = 0; j < COLS; j++) {
-          if (grid[i][j] != 0) {
-            sum = 0;
-            for (let k = i-1; k < i + 1; k += 0.0625){
-              for (let t = j-1; t < j + 1; t += 0.0625){
-                let coords = barycentric_coords(k, t, row0, col0, row1, col1, row2, col2);
-                if (!(coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0)) {
-                 sum += 1;
-                }
-              } 
-            }
-            grid[i][j] = color((sum * 255)/256);
+  function colorize_shader({ pattern: mixin }) {
+    let rgb = mixin.slice(0, 3);
+    return color(rgb);
+  }
+
+  function randomize() {
+    col0 = int(random(0, COLS));
+    row0 = int(random(0, ROWS));
+    col1 = int(random(0, COLS));
+    row1 = int(random(0, ROWS));
+    col2 = int(random(0, COLS));
+    row2 = int(random(0, ROWS));
+  }
+
+  function applyAA() {
+    grid = quadrille.memory2D;
+
+    for (let i = 0; i < ROWS; i++) {
+      for (let j = 0; j < COLS; j++) {
+        if (grid[i][j] != 0) {
+          sum = 0;
+          for (let k = i-1; k < i + 1; k += 0.0625){
+            for (let t = j-1; t < j + 1; t += 0.0625){ // Pixel division: 1024 subpixels
+              let coords = barycentric_coords(k, t, row0, col0, row1, col1, row2, col2);
+              if (!(coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0)) {
+                sum += 1;
+              }
+            } 
           }
+          grid[i][j] = color((sum * 255)/256);
         }
       }
-
-      quadrille.memory2D = grid;
     }
+
+    quadrille.memory2D = grid;
+  }
 
   function barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
     let edges = edge_functions(row, col, row0, col0, row1, col1, row2, col2);
@@ -197,7 +195,100 @@ A partir del estudio llevado a cabo se realizó el siguiente programa con el fin
     let e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
     return { e01, e12, e20 };
   }
+{{< /p5-global-iframe */>}}
+```
+{{< /details >}}
 
+{{< p5-global-iframe id="AA" width="525" height="525" lib1="/showcase/scripts/p5.quadrille.js">}}
+  const ROWS = 100;
+  const COLS = 100;
+  const LENGTH = 5;
+  let quadrille;
+  let row0, col0, row1, col1, row2, col2;
+  let original_quadrille;
+
+  function setup() {
+    createCanvas(COLS * LENGTH, ROWS * LENGTH);
+    quadrille = createQuadrille(200, 200);
+    quadrille.colorize('red', 'green', 'blue', 'cyan');
+  }
+
+  function draw() {
+    background('#f7f5f5');
+    drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'black', board: true });
+  }
+
+  function keyPressed() {
+    if (key === 'r') { // Rasterize the triangle
+      randomize();
+      quadrille.clear();
+      quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
+      original_quadrille = quadrille.memory2D;
+    }
+
+    if (key === 'a') { // Apply anti-aliasing
+      applyAA();
+    }
+
+    if (key === 's') { // Remove anti-aliasing
+      quadrille.memory2D = original_quadrille;
+    }
+
+  }
+
+  function colorize_shader({ pattern: mixin }) {
+    let rgb = mixin.slice(0, 3);
+    return color(rgb);
+  }
+
+  function randomize() {
+    col0 = int(random(0, COLS));
+    row0 = int(random(0, ROWS));
+    col1 = int(random(0, COLS));
+    row1 = int(random(0, ROWS));
+    col2 = int(random(0, COLS));
+    row2 = int(random(0, ROWS));
+  }
+
+  function applyAA() {
+    grid = quadrille.memory2D;
+
+    for (let i = 0; i < ROWS; i++) {
+      for (let j = 0; j < COLS; j++) {
+        if (grid[i][j] != 0) {
+          sum = 0;
+          for (let k = i-1; k < i + 1; k += 0.0625){
+            for (let t = j-1; t < j + 1; t += 0.0625){ // Pixel division: 1024 subpixels
+              let coords = barycentric_coords(k, t, row0, col0, row1, col1, row2, col2);
+              if (!(coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0)) {
+                sum += 1;
+              }
+            } 
+          }
+          grid[i][j] = color((sum * 255)/256);
+        }
+      }
+    }
+
+    quadrille.memory2D = grid;
+  }
+
+  function barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
+    let edges = edge_functions(row, col, row0, col0, row1, col1, row2, col2);
+    let area = parallelogram_area(row0, col0, row1, col1, row2, col2);
+    return { w0: edges.e12 / area, w1: edges.e20 / area, w2: edges.e01 / area };
+  }
+
+  function parallelogram_area(row0, col0, row1, col1, row2, col2) {
+    return (col1 - col0) * (row2 - row0) - (col2 - col0) * (row1 - row0);
+  }
+
+  function edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
+    let e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
+    let e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
+    let e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
+    return { e01, e12, e20 };
+  }
 {{< /p5-global-iframe >}}
 
 ### **5. Discusión**

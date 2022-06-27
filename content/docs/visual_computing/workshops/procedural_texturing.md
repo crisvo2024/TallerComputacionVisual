@@ -1,200 +1,278 @@
-# **Taller Rasterización**
+# **Procedural texturing**
 
-En este taller se estudió la técnica denominada **anti-aliasing** con la cual se busca disminuir la distorción en imágenes de alta resolución al ser presentadas en una resolución inferior.
-
-# Anti-aliasing (AA)
+En este taller se estudió la técnica denominada **procedurtal texturing** con la cual se busca generar programáticamente texturas en el shader para mapearlas a figuras
 
 ### **1. Introducción**
 
-Un problema básico al realizar renderización es que si amplía la imagen del triángulo que se ha renderizado entonces se evidencia que los bordes del triángulo no son regulares, es decir, se puede observar pequeños "escalones" a lo largo del triángulo como se muestra en la siguiente figura.
+Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D. Pero al ser generadas por computador, se hace necesario el uso de funciones de ruido, estas funciones de ruido permiten generar la sensación de aleatoriedad, como la que se genera en la naturaleza de los materiales rugosos, permitiendo así la generación de texturas mucho más realistas. Adicionalmente, estas texturas necesitan de diseños que permitan percibir profundidad entre otros rasgos para no verse solo como una imagen pintada en el objeto, para lo cual ya se utilizan modelos de iluminación y de texture mapping combinados con las técnicas de procedural texturing.
 
-![Aliasing en una imagen renderizada.](/showcase/sketches/aliasing.png "Aliasing (AA)")
 
-A estos escalones que se mencionan se les conoce usualmente con la palabra *jaggies*. Estos bordes dentados son básicamente el resultado del hecho de que el triángulo se descompone en píxeles ya que con el proceso de rasterización lo que se hace es descomponer una superficie continua como lo es el triángulo en elementos discretos que vienen siendo los píxeles. La solución propuesta para este problema se denomina anti-aliasing (también denotado *AA*) que consiste en dividir el píxel en subpíxeles y aplicar la prueba a cada subpíxel para ver si este se esncuentra o no dentro del triángulo. Aunque cada subpíxel no viene siendo más que otro escalón este proceso permite capturar los bordes con más precisión.
+
 
 ### **2. Revisión bibliográfica**
 
-Retomando la idea propuesta en la sección anterior en la cual se cogían submuestras de cada píxel lo que se hace entonces para *"suavizar"* estos bordes es determinar el color final del píxel como la suma del color de todos los subpíxeles dividida por el número total de subpíxeles. A modo de ejemplificar este proceso consideremos un triángulo de color negro con fondo blanco y dividimos cada píxel del triángulo rasterizado en 8 subpíxeles. Al aplicar el anti-aliasing sobre un determinado píxel vemos que solo 5 de sus 8 subpíxeles se encuentrán dentro del triángulo entonces el color final (en RGB) del píxel quedaría:
+Para empezar con la generación de texturas se realizó una revisión bibliográfica en cuanto a generación de patrones en el shader, posteriormente se exploró la parte de aleatorización de las texturas y finalmente se intentó realizar una revisión de modelos de iluminación.
 
-{{< katex display >}}
-\frac{255 + 255 + 255 + 0 + 0 + 0 + 0 + 0}{8} = \frac{765}{8} = 95.625
-{{< /katex >}}
+#### **2.1 Patrones**
 
-Este color corresponde a un gris oscuro. De esta manera se deja a un lado una transición *"binaria"* entre el borde del triángulo y el fondo para producir una transición más gradual con el fin de disminuir visualmente el efecto de los bordes escalonados.
+Dado que los programas en los shaders siempre se realizan pixel por pixel, sin importar cuánto se repita una forma, el número de cálculos se mantiene constante, esto hace que los shaders sean el lugar ideal para generar patrones.
 
-Con el propósito de dar un fundamento teórico general del proceso de rasterización y anti-alising se hará una breve explicación de las coordenadas baricéntricas:
+Para la generación de patrones, se utiliza comúnmente una normalización del espacio, de forma que las coordenadas queden entre 1 y 0, las cuales se pueden dividir fácilmente para generar una cuadrícula, que sea un marco para la generación de los patrones. Las cuadrículas son especialmente útiles a la hora de generar patrones y se han utilizado desde la antigüedad, un ejemplo de esto son los mosaicos en los baños romanos.
 
-#### **2.1 Coordenadas baricéntricas**
+En glsl para realizar este proceso se toman las coordenadas de textura y se dividen en la resolución de la pantalla, posteriormente se multiplican estas coordenadas por el tamaño de la cuadrícula que se requiera, de esta forma se pueden utilizar funciones como fract que retorna la parte no entera de un número o mod que saca el módulo de un número en otro número, para empezar a dividir la cuadrícula y generar las formas necesarias. Un ejemplo de esto es el siguiente shader:
+```glsl
+// Author @patriciogv - 2015
 
-Un ***triángulo*** es un polígono con 3 vértices *v0*, *v1*, *v2* y 3 aristas *v0v1*, *v1v2*, *v2v0*. Un triángulo degenerado es aquel en el que los tres vértices son colineales, es decir, todos caen sobre la misma línea (o incluso pueden ser todos el mismo punto). En 2D un triángulo divide el plano en dos regiones: la interior, que es finita, y la exterior, que no lo es. Ambas están separadas por el límite de los triángulos, que consiste en las tres aristas. Para rasterizar un triángulo, básicamente sólo tenemos que consultar un montón de puntos, que suelen corresponder directamente a la cuadrícula de píxeles o estar dispuestos en algún otro patrón regular, y averiguar si están dentro o no. Además de lo anterior se tiene también que los triángulos son siempre convexos: para dos puntos cualesquiera dentro del triángulo, la línea que los une está también totalmente dentro del triángulo.
+#ifdef GL_ES
+precision mediump float;
+#endif
 
-![Triángulo con vértices especificados.](/showcase/sketches/tri1.webp "Triángulo")
+uniform vec2 u_resolution;
+uniform float u_time;
 
-Consideranto la arista *v0v1* de la imagen anterior vemos que esta línea divide el plano en dos mitades: un lado *"izquierdo"* y un lado *"derecho"*. No obstante, si el borde resulta ser horizontal entonces ¿cuál de las dos mitades es la "izquierda" si están apiladas verticalmente?. Por ello se hace necesario expresarlo todo en relación con la arista y no con la imagen de tal manera que e recorre el triángulo por la arista desde *v0* hacia *v1*. Con esto, se refiere a todo lo que está a la izquierda (mirando hacia v1) como el semiespacio *"positivo"*, y a todo lo que está a la derecha como el semiespacio *"negativo"*. Por último, los puntos que caen sobre la línea no pertenecen a ninguno de los dos semiespacios.
+float circle(in vec2 _st, in float _radius){
+    vec2 l = _st-vec2(0.5);
+    return 1.-smoothstep(_radius-(_radius*0.01),
+                         _radius+(_radius*0.01),
+                         dot(l,l)*4.0);
+}
 
-Ahora bien, se introduce el concepto del ***determinante*** de una matriz dados 3 puntos como:
+void main() {
+	vec2 st = gl_FragCoord.xy/u_resolution;
+    vec3 color = vec3(0.0);
 
+    st *= 3.0;      // Scale up the space by 3
+    st = fract(st); // Wrap around 1.0
 
-{{< katex display >}}
-Orient2D(a, b, c) =
-\begin{vmatrix}
-a_{x} & b_{x} & c_{x}\\
-a_{y} & b_{y} & c_{y}\\
-1 & 1 & 1
-\end{vmatrix} =
-\begin{vmatrix}
-b_{x} - a_{x} & c_{x} - a_{x} \\
-b_{y} - a_{y} & c_{y} - a_{y}
-\end{vmatrix}
-{{< /katex >}}
+    // Now we have 9 spaces that go from 0-1
 
-De esta manera, si esta expresión es positiva, c se encuentra a la izquierda de la arista dirigida *ab* (es decir, el triángulo *abc* se enrolla en sentido contrario a las agujas del reloj). Así que, al calcular *Orient2D(v0, v1, v2)* esto debería indicar si el triángulo está enrollado en sentido contrario a las agujas del reloj (es decir, si *v2* está a la izquierda de la arista orientada *v0v1*) o no. La expresión anterior nos dice que debemos calcular el siguiente determinante:
+    color = vec3(st,0.0);
 
-{{< katex display >}}
-Orient2D(v_{0}, v_{1}, v_{2}) =
-\begin{vmatrix}
-v_{1x} - v_{0x} & v_{2x} - v_{0x} \\ 
-v_{1y} - v_{0y} & v_{2y} - v_{0y}
-\end{vmatrix}
-{{< /katex >}}
+	gl_FragColor = vec4(color,1.0);
+}
+```
+que genera la siguiente textura:
 
-Y esto debería ser igual al ***área con signo del paralelogramo*** con aristas *v0v1* y *v0v2* como se muestra a continuación:
+![Textura generada](/showcase/sketches/cuadricula.png "Textura generada")
 
-![Paralelogramo formado por 2 vectores.](/showcase/sketches/tri_area1.webp "Paralelogramo")
+Dentro de estas cuadrículas ya podemos empezar a generar nuestros patrones. Uno de estos son los patrones de Offset o de desplazamiento. Para poder generar estos patrones, que son como los de una pared de ladrillos, se hace necesario el identificar si una fila es par o impar para saber si el ladrillo se debe desplazar o no.
+```glsl
+y = step(1.0,mod(x,2.0));
+```
+Esta es la forma más eficiente de realizar lo anterior en el shader. Esta línea lo que hace es que aplica el módulo en base 2 para x, de esta forma toma dos cuadros de la cuadrícula generada, y con la función step, diferencia entre estas 2 cual es la par y cual es la impar generando un 0 para cualquier valor menor que 1 y un 1 para todo lo que sea mayor que 1. Se puede notar cómo esto podría realizarse con un condicional y un < pero, al ser step una función del lenguaje, funciona mucho más rápido que este condicional. Es por esto que cada vez que se pueda usar una función como esta, va a ser más óptimo usarla.
 
-Ahora bien, si observamos la imagen tenemos que el paralelogramo tiene el doble de área que el triángulo lo cual nos da la fórmula estándar del determinante para el ***área del triángulo***:
+#### **2.2 Ruido**
 
-{{< katex display >}}
-TriArea(v_{0}, v_{1}, v_{2}) = \frac{1}{2}
-\begin{vmatrix}
-v_{1x} - v_{0x} & v_{2x} - v_{0x} \\ 
-v_{1y} - v_{0y} & v_{2y} - v_{0y}
-\end{vmatrix}
-{{< /katex >}}
+Ya teniendo las bases para generar formas definidas, se hace necesario introducir la aleatoriedad para generar formas más realistas. El primer acercamiento que se hace frente a este tema, utiliza funciones sinusoidales, las multiplica por números muy grandes y extrae la parte fraccionaria de cada número, generando números pseudo-aleatorios. Es necesario notar que como generadoras de números pseudo-aleatorios, estas funciones reciben un número y a partir de este generan el número "aleatorio", sin embargo, ante un mismo número siempre se va a generar la misma salida. Adicionalmente, esta forma de generar números, tiene un problema y es que los números tienden a concentrarse en el centro. Una función que podría utilizarse para generar ruido en 2D es la siguiente:
+```glsl
+    fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+```
+Esta función utiliza el seno del producto punto del vector de coordenadas y un vector aleatorio, multiplicado por un valor igualmente aleatorio y finalmente toma la parte fraccionaria de este número. El resultado de esta función es un ruido como el que se generaba en los televisores antiguos cuando no había señal.
 
-Ahora, para averiguar en qué lado de una arista se encuentra un punto vamos a elegir un punto arbitrario *p* y ver cómo se relaciona con la arista *v0v1* de tal manera que la expresión del determinante quedaría:
+![TV](/showcase/sketches/tv.png "TV")
 
-{{< katex display >}}
-\begin{vmatrix}
-v_{1x} - v_{0x} & p_{x} - v_{0x} \\ 
-v_{1y} - v_{0y} & p_{y} - v_{0y}
-\end{vmatrix} = (v_{1x} - v_{0x})(p_{y} - v_{0y}) - (v_{1y} - v_{0y})(p_{x} - v_{0x})
-{{< /katex >}}
+Aunque esta fórmula aporta aleatoriedad, esta no es ni parecida a la que encontramos normalmente en la naturaleza y los objetos reales, esto se da porque esté aleatorio no guarda ninguna correlación entre sus valores, pero en la naturaleza, la mayoría de los patrones guardan memoria del estado anterior. 
 
-Y reordenando términos tenemos:
+El lograr un ruido más natural, fue el reto al que se enfrentó Ken Perlin en los 80s cuando se enfrentó al reto de generar texturas más realistas para su película Tron. Como resultado ideó dos algoritmos, uno de ellos ganador de un Oscar.
 
-{{< katex display >}}
-F_{01}(p) = (v_{0y} - v_{1y})p_{x} + (v_{1x} - v_{0x})p_{y} + (v_{0x}v_{1y} - v_{0y}v_{1x})\\
-F_{12}(p) = (v_{1y} - v_{2y})p_{x} + (v_{2x} - v_{1x})p_{y} + (v_{1x}v_{2y} - v_{1y}v_{2x})\\
-F_{20}(p) = (v_{2y} - v_{0y})p_{x} + (v_{0x} - v_{2x})p_{y} + (v_{2x}v_{0y} - v_{2y}v_{0x})
-{{< /katex >}}
+El primer algoritmo llamado “Value Noise”, utiliza una interpolación de la parte entera y la parte fraccionaria del número de entrada para realizar la generación, de esta forma se mantiene la correlación con la parte entera, pero también una parte aleatoria con la no entera. El algoritmo resultante es este:
 
-A estas funciones se les denomina ***función de borde*** (o *edge function* en inglés) para los borded *v0v1*, *v1v2* y *v2v0* respectivamente, y de esta manera si las tres son positivas, *p* está dentro del triángulo, suponiendo que el triángulo está enrollado en sentido contrario a las agujas del reloj.
+```glsl
+    float i = floor(x);  // integer
+    float f = fract(x);  // fraction
+    y = mix(rand(i), rand(i + 1.0), smoothstep(0.,1.,f));
+```
+La función smoothstep nos permite que esta interpolación no sea lineal sino que como lo dice su nombre sea suavizada, ayudando a que la conexión de los valores se vea mucho más natural. Esto también se puede realizar utilizando una fórmula cúbica personalizada como prefieren algunos autores.
 
-Y es este hecho con el cual se trabaja para realizar la rasterización de una imagen y por consiguiente también se usa para el proceso de anti-aliasing.
+No obstante, esta función no fue lo suficientemente buena para Perlin, quien en 1985 ideó otra implementación de este algoritmo, la cual llamó "Gradient Noise". En esta, Perlin averiguar cómo interpolar gradientes aleatorios en vez de valores. Estos gradientes son el resultado de una función aleatoria en 2D que retorna direcciónes en vez de valores simples. El resultado:
 
+```glsl
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    vec2 u = f*f*(3.0-2.0*f);
+
+    return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
+                     dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
+                     dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+```
+Como podemos notar en este caso se utilizó una función cúbica personalizada en vez de smoothstep, para calcular u.
+
+Pero para Perlin esto todavía no fue suficiente, el sabia que podía hacerlo mejor, por lo que en 2001 presentó el "simplex noise". Este mejoraba el algoritmo anterior en los siguientes aspectos:
+
+- Un algoritmo con menor complejidad computacional y menos multiplicaciones.
+- Un ruido que escala a dimensiones más altas con menos coste computacional.
+- Un ruido sin artefactos direccionales.
+- Un ruido con gradientes bien definidos y continuos que puedan calcularse de forma bastante económica.
+- Un algoritmo fácil de implementar en hardware.
+
+Para la mejora, el vio que en dos dimensiones el estaba interpolando 4 puntos del cuadrado, así que él pudo notar que para 3 y 4 dimensiones se tenían que interpolar 6 y 16 puntos, de esta forma para N dimensiones 2^n. Por lo que decidió reemplazar la cuadrícula, por un una rejilla simplex de triángulos equiláteros
+La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabras 1 esquina menos en 2 dimensiones, 4 en 3D y 11en 4D. 
+
+¿Cómo se hace la rejilla simplex? la cuadrícula simplex puede obtenerse subdividiendo las celdas de una cuadrícula regular de 4 esquinas en dos triángulos isósceles y luego distprcionandola hasta que cada triángulo sea equilátero.
+```glsl
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+// Some useful functions
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+//
+// Description : GLSL 2D simplex noise function
+//      Author : Ian McEwan, Ashima Arts
+//  Maintainer : ijm
+//     Lastmod : 20110822 (ijm)
+//     License :
+//  Copyright (C) 2011 Ashima Arts. All rights reserved.
+//  Distributed under the MIT License. See LICENSE file.
+//  https://github.com/ashima/webgl-noise
+//
+float snoise(vec2 v) {
+
+    // Precompute values for skewed triangular grid
+    const vec4 C = vec4(0.211324865405187,
+                        // (3.0-sqrt(3.0))/6.0
+                        0.366025403784439,
+                        // 0.5*(sqrt(3.0)-1.0)
+                        -0.577350269189626,
+                        // -1.0 + 2.0 * C.x
+                        0.024390243902439);
+                        // 1.0 / 41.0
+
+    // First corner (x0)
+    vec2 i  = floor(v + dot(v, C.yy));
+    vec2 x0 = v - i + dot(i, C.xx);
+
+    // Other two corners (x1, x2)
+    vec2 i1 = vec2(0.0);
+    i1 = (x0.x > x0.y)? vec2(1.0, 0.0):vec2(0.0, 1.0);
+    vec2 x1 = x0.xy + C.xx - i1;
+    vec2 x2 = x0.xy + C.zz;
+
+    // Do some permutations to avoid
+    // truncation effects in permutation
+    i = mod289(i);
+    vec3 p = permute(
+            permute( i.y + vec3(0.0, i1.y, 1.0))
+                + i.x + vec3(0.0, i1.x, 1.0 ));
+
+    vec3 m = max(0.5 - vec3(
+                        dot(x0,x0),
+                        dot(x1,x1),
+                        dot(x2,x2)
+                        ), 0.0);
+
+    m = m*m ;
+    m = m*m ;
+
+    // Gradients:
+    //  41 pts uniformly over a line, mapped onto a diamond
+    //  The ring size 17*17 = 289 is close to a multiple
+    //      of 41 (41*7 = 287)
+
+    vec3 x = 2.0 * fract(p * C.www) - 1.0;
+    vec3 h = abs(x) - 0.5;
+    vec3 ox = floor(x + 0.5);
+    vec3 a0 = x - ox;
+
+    // Normalise gradients implicitly by scaling m
+    // Approximation of: m *= inversesqrt(a0*a0 + h*h);
+    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0+h*h);
+
+    // Compute final noise value at P
+    vec3 g = vec3(0.0);
+    g.x  = a0.x  * x0.x  + h.x  * x0.y;
+    g.yz = a0.yz * vec2(x1.x,x2.x) + h.yz * vec2(x1.y,x2.y);
+    return 130.0 * dot(m, g);
+}
+
+void main() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    st.x *= u_resolution.x/u_resolution.y;
+
+    vec3 color = vec3(0.0);
+
+    // Scale the space in order to see the function
+    st *= 10.;
+
+    color = vec3(snoise(st)*.5+.5);
+
+    gl_FragColor = vec4(color,1.0);
+}
+```
 ### **3. Métodos**
 
-Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de anti-aliasing (AA) en la rasterización de imágenes. De esta manera se investigaron distintas fuentes de información debidamente citadas de las cuales se extrajeron ideas generales acerca de conceptos clave como la fundamentación teórica de las coordenas baricéntricas y el proceso de anti-aliasing aplicado en imágenes.
-
-Finalmente se desarrolló un programa a partir de un ejemplo de rasterización de un triángulo desarrollado por el profesor ***Jean Pierre Charalambos Hernandez*** (vease los recursos citados para ver el ejemplo original) de tal manera que fue modificado y adaptado para poder aplicar anti-aliasing sobre un triángulo ya rasterizado.
-
+Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitio completarlo.
 ### **4. Resultados**
 
-A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del anti-aliasing sobre un triángulo rasterizado.
+A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del procedural texturing.
 
 {{< details title="p5 - anti-aliasing code" open=false >}}
 ```js
-{{</* p5-global-iframe id="breath" width="625" height="625" >}}
-  const ROWS = 100;
-  const COLS = 100;
-  const LENGTH = 5;
-  let quadrille;
-  let row0, col0, row1, col1, row2, col2;
-  let original_quadrille;
+{{</* p5-global-iframe id="prod_text" width="430" height="430" lib1="/showcase/scripts/p5.treegl.js">}}
+    let pg;
+    let truchetShader;
 
-  function setup() {
-    createCanvas(COLS * LENGTH, ROWS * LENGTH);
-    quadrille = createQuadrille(200, 200);
-    quadrille.colorize('red', 'green', 'blue', 'cyan');
-  }
-
-  function draw() {
-    background('#f7f5f5');
-    drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'black', board: true });
-  }
-
-  function keyPressed() {
-    if (key === 'r') { // Rasterize the triangle
-      randomize();
-      quadrille.clear();
-      quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]);
-      original_quadrille = quadrille.memory2D;
+    function preload() {
+      // shader adapted from here: https://thebookofshaders.com/09/
+      // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
+      // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
+      truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
     }
 
-    if (key === 'a') { // Apply anti-aliasing
-      applyAA();
+    function setup() {
+      createCanvas(400, 400, WEBGL);
+      // create frame buffer object to render the procedural texture
+      pg = createGraphics(400, 400, WEBGL);
+      textureMode(NORMAL);
+      noStroke();
+      pg.noStroke();
+      // use truchetShader to render onto pg
+      pg.shader(truchetShader);
+      // emitResolution, see:
+      // https://github.com/VisualComputing/p5.treegl#macros
+      pg.emitResolution(truchetShader);
+      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+      // set pg as texture
+      texture(pg);
     }
 
-    if (key === 's') { // Remove anti-aliasing
-      quadrille.memory2D = original_quadrille;
+    function draw() {
+      background(33);
+      truchetShader.setUniform('u_time', frameCount);
+      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+      orbitControl();
+      // cylinder(100, 200);
+      sphere(100)
+      // cone(100,100);
+
+      // ambientLight(60);
+      // let locX = mouseX - width / 2;
+      // let locY = mouseY - height / 2;
+      // let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'WORLD'});
+      // pointLight(255, 255, 255, light.x, light.y, light.z);
+      // box(100);
     }
-
-  }
-
-  function colorize_shader({ pattern: mixin }) {
-    let rgb = mixin.slice(0, 3);
-    return color(rgb);
-  }
-
-  function randomize() {
-    col0 = int(random(0, COLS));
-    row0 = int(random(0, ROWS));
-    col1 = int(random(0, COLS));
-    row1 = int(random(0, ROWS));
-    col2 = int(random(0, COLS));
-    row2 = int(random(0, ROWS));
-  }
-
-  function applyAA() {
-    grid = quadrille.memory2D;
-
-    for (let i = 0; i < ROWS; i++) {
-      for (let j = 0; j < COLS; j++) {
-        if (grid[i][j] != 0) {
-          sum = 0;
-          for (let k = i-1; k < i + 1; k += 0.0625){
-            for (let t = j-1; t < j + 1; t += 0.0625){ // Pixel division: 1024 subpixels
-              let coords = barycentric_coords(k, t, row0, col0, row1, col1, row2, col2);
-              if (!(coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0)) {
-                sum += 1;
-              }
-            } 
-          }
-          grid[i][j] = color((sum * 255)/256);
-        }
-      }
-    }
-
-    quadrille.memory2D = grid;
-  }
-
-  function barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
-    let edges = edge_functions(row, col, row0, col0, row1, col1, row2, col2);
-    let area = parallelogram_area(row0, col0, row1, col1, row2, col2);
-    return { w0: edges.e12 / area, w1: edges.e20 / area, w2: edges.e01 / area };
-  }
-
-  function parallelogram_area(row0, col0, row1, col1, row2, col2) {
-    return (col1 - col0) * (row2 - row0) - (col2 - col0) * (row1 - row0);
-  }
-
-  function edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
-    let e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
-    let e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
-    let e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
-    return { e01, e12, e20 };
-  }
+    function mouseMoved() {
+      // https://p5js.org/reference/#/p5.Shader/setUniform
+      // pg.emitMousePosition(truchetShader);
+      let locX = mouseX - width / 2;
+      let locY = mouseY - height / 2;
+      let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'EYE'});
+      truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
+      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+    } 
+    
 {{< /p5-global-iframe */>}}
 ```
 {{< /details >}}
@@ -252,7 +330,7 @@ A partir del estudio llevado a cabo se realizó el siguiente programa con el fin
       let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'EYE'});
       truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
       // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      quad(-width / 2, -height / 2, width / 2, -height / 2, width / 2, height / 2, -width / 2, height / 2);
+      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
     } 
     
 {{< /p5-global-iframe >}}

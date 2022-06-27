@@ -1,7 +1,7 @@
 <!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Taller Rasterización #  En este taller se estudió la técnica denominada anti-aliasing con la cual se busca disminuir la distorción en imágenes de alta resolución al ser presentadas en una resolución inferior.
 Anti-aliasing (AA) #  1. Introducción #  Un problema básico al realizar renderización es que si amplía la imagen del triángulo que se ha renderizado entonces se evidencia que los bordes del triángulo no son regulares, es decir, se puede observar pequeños &ldquo;escalones&rdquo; a lo largo del triángulo como se muestra en la siguiente figura."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content><meta property="og:description" content="Taller Rasterización #  En este taller se estudió la técnica denominada anti-aliasing con la cual se busca disminuir la distorción en imágenes de alta resolución al ser presentadas en una resolución inferior.
-Anti-aliasing (AA) #  1. Introducción #  Un problema básico al realizar renderización es que si amplía la imagen del triángulo que se ha renderizado entonces se evidencia que los bordes del triángulo no son regulares, es decir, se puede observar pequeños &ldquo;escalones&rdquo; a lo largo del triángulo como se muestra en la siguiente figura."><meta property="og:type" content="article"><meta property="og:url" content="https://visualcomputing.github.io/showcase/docs/visual_computing/workshops/procedural_texturing/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2022-06-26T21:05:15-05:00"><title>Procedural Texturing | Visual Computing</title><link rel=manifest href=/showcase/manifest.json><link rel=icon href=/showcase/favicon.png type=image/x-icon><link rel=stylesheet href=/showcase/book.min.ab46de3e725a6415339a37bba23a0067534a37289b063c9f8d011515a63097a8.css integrity="sha256-q0bePnJaZBUzmje7ojoAZ1NKNyibBjyfjQEVFaYwl6g=" crossorigin=anonymous><script defer src=/showcase/flexsearch.min.js></script>
-<script defer src=/showcase/en.search.min.86ad3b44265f3d987f565cad4b3af2f03e0e71bf91375b5c381f5bc2296bbab8.js integrity="sha256-hq07RCZfPZh/VlytSzry8D4Ocb+RN1tcOB9bwilrurg=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+Anti-aliasing (AA) #  1. Introducción #  Un problema básico al realizar renderización es que si amplía la imagen del triángulo que se ha renderizado entonces se evidencia que los bordes del triángulo no son regulares, es decir, se puede observar pequeños &ldquo;escalones&rdquo; a lo largo del triángulo como se muestra en la siguiente figura."><meta property="og:type" content="article"><meta property="og:url" content="https://visualcomputing.github.io/showcase/docs/visual_computing/workshops/procedural_texturing/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2022-06-27T00:42:42-05:00"><title>Procedural Texturing | Visual Computing</title><link rel=manifest href=/showcase/manifest.json><link rel=icon href=/showcase/favicon.png type=image/x-icon><link rel=stylesheet href=/showcase/book.min.ab46de3e725a6415339a37bba23a0067534a37289b063c9f8d011515a63097a8.css integrity="sha256-q0bePnJaZBUzmje7ojoAZ1NKNyibBjyfjQEVFaYwl6g=" crossorigin=anonymous><script defer src=/showcase/flexsearch.min.js></script>
+<script defer src=/showcase/en.search.min.de5120079e9e3fccb69c8f9c68b592998cd89fe748ed3bf74ade4a299031b314.js integrity="sha256-3lEgB56eP8y2nI+caLWSmYzYn+dI7Tv3St5KKZAxsxQ=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/showcase/><span>Visual Computing</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li class=book-section-flat><span>Visual Computing</span><ul><li><a href=/showcase/docs/visual_computing/logs/>Logs</a></li><li><a href=/showcase/docs/visual_computing/profiles/>Profiles</a></li><li><input type=checkbox id=section-29bdbf19413e05c2e701868288e4ab17 class=toggle>
 <label for=section-29bdbf19413e05c2e701868288e4ab17 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/>Template Examples</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/buttons/>Buttons</a></li><li><a href=/showcase/docs/visual_computing/template_examples/columns/>Columns</a></li><li><a href=/showcase/docs/visual_computing/template_examples/details/>Details</a></li><li><a href=/showcase/docs/visual_computing/template_examples/expand/>Expand</a></li><li><a href=/showcase/docs/visual_computing/template_examples/hints/>Hints</a></li><li><a href=/showcase/docs/visual_computing/template_examples/katex/>Katex</a></li><li><a href=/showcase/docs/visual_computing/template_examples/mermaid/>Mermaid</a></li><li><input type=checkbox id=section-619959e653037cbeb27c2fc2f70843f1 class=toggle>
 <label for=section-619959e653037cbeb27c2fc2f70843f1 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/p5/>P5</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/p5/div/>Div</a></li><li><a href=/showcase/docs/visual_computing/template_examples/p5/iframe/>Iframe</a></li></ul></li><li><a href=/showcase/docs/visual_computing/template_examples/tabs/>Tabs</a></li></ul></li><li><input type=checkbox id=section-43decbbd35cace6c4f05150232266586 class=toggle checked>
@@ -129,7 +129,7 @@ F_{20}(p) = (v_{2y} - v_{0y})p_{x} + (v_{0x} - v_{2x})p_{y} + (v_{2x}v_{0y} - v_
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> { <span style=color:#a6e22e>e01</span>, <span style=color:#a6e22e>e12</span>, <span style=color:#a6e22e>e20</span> };
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>{{<span style=color:#f92672>&lt;</span> <span style=color:#960050;background-color:#1e0010>/p5-global-iframe &gt;}}</span>
-</span></span></code></pre></div></div></details><iframe id=prod_text style=width:400px;height:400px srcdoc="
+</span></span></code></pre></div></div></details><iframe id=prod_text style=width:430px;height:430px srcdoc="
         <!DOCTYPE html>
         <html>
           <head>
@@ -146,36 +146,57 @@ F_{20}(p) = (v_{2y} - v_{0y})p_{x} + (v_{0x} - v_{2x})p_{y} + (v_{2x}v_{0y} - v_
     let truchetShader;
 
     function preload() {
-    // shader adapted from here: https://thebookofshaders.com/09/
-    truchetShader = readShader('/showcase/scripts/brickwall.frag', { matrices: Tree.NONE, varyings: Tree.NONE });
+      // shader adapted from here: https://thebookofshaders.com/09/
+      // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
+      // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
+      truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
     }
 
     function setup() {
-    createCanvas(400, 400, WEBGL);
-    // create frame buffer object to render the procedural texture
-    pg = createGraphics(400, 400, WEBGL);
-    textureMode(NORMAL);
-    noStroke();
-    pg.noStroke();
-    pg.textureMode(NORMAL);
-    // use truchetShader to render onto pg
-    pg.shader(truchetShader);
-    // emitResolution, see:
-    // https://github.com/VisualComputing/p5.treegl#macros
-    pg.emitResolution(truchetShader);
-    // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-    pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-    // set pg as texture
-    texture(pg);
+      createCanvas(400, 400, WEBGL);
+      // create frame buffer object to render the procedural texture
+      pg = createGraphics(400, 400, WEBGL);
+      textureMode(NORMAL);
+      noStroke();
+      pg.noStroke();
+      // use truchetShader to render onto pg
+      pg.shader(truchetShader);
+      // emitResolution, see:
+      // https://github.com/VisualComputing/p5.treegl#macros
+      pg.emitResolution(truchetShader);
+      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+      // set pg as texture
+      texture(pg);
     }
 
     function draw() {
-    background(33);
-    truchetShader.setUniform('u_time', frameCount);
-    pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-    orbitControl();
-    cylinder(100, 200);
+      background(33);
+      truchetShader.setUniform('u_time', frameCount);
+      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+      orbitControl();
+      // cylinder(100, 200);
+      sphere(100)
+      // cone(100,100);
+
+      // ambientLight(60);
+      // let locX = mouseX - width / 2;
+      // let locY = mouseY - height / 2;
+      // let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'WORLD'});
+      // pointLight(255, 255, 255, light.x, light.y, light.z);
+      // box(100);
     }
+    function mouseMoved() {
+      // https://p5js.org/reference/#/p5.Shader/setUniform
+      // pg.emitMousePosition(truchetShader);
+      let locX = mouseX - width / 2;
+      let locY = mouseY - height / 2;
+      let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'EYE'});
+      truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
+      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+      quad(-width / 2, -height / 2, width / 2, -height / 2, width / 2, height / 2, -width / 2, height / 2);
+    } 
+    
 
             </script>
           </head>
@@ -185,5 +206,5 @@ F_{20}(p) = (v_{2y} - v_{0y})p_{x} + (v_{0x} - v_{2x})p_{y} + (v_{2x}v_{0y} - v_
       "></iframe><h3 id=5-discusión><strong>5. Discusión</strong>
 <a class=anchor href=#5-discusi%c3%b3n>#</a></h3><p>Partiendo de los resultados obtenidos tenemos que se puede evidenciar un <em>suavizado</em> en los bordes de cada triángulo generado dependiendo de qué fracción de los píxeles de los bordes estén por dentro y qué fracción estén por fuera. Por otra parte, y partiendo del hecho de que se realizó una subdivisión de cada píxel en 256 subpíxeles se evidencia que el proceso de rasterización que se lleva a cabo para determinar el promedio del color del píxel se hace de manera rápida debido a que el cálculo de las funciones de borde para cada subpíxel no significa una carga computacional grande.</p><h3 id=6-conclusión><strong>6. Conclusión</strong>
 <a class=anchor href=#6-conclusi%c3%b3n>#</a></h3><ol><li>El anti-aliasing es un proceso de mucha utilidad y aplicabilidad por ejemplo en el contexto de los videojuegos ya que provee de un algorítmo eficiente con el cual dar un efecto de suavizado de las figuras y de esta manera el usuario puede tener una visualización de los gráficos mucho más agradable.</li></ol><p><img src=/showcase/sketches/anti-aliasing-effect-.jpg alt="Efecto del antialiasing." title="Efecto AA"></p><ol start=2><li></li></ol><h3 id=7-referencias><strong>7. Referencias</strong>
-<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation>Rasterization: a Practical Implementation</a></li><li><a href=https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/n>The barycentric conspiracy</a></li><li><a href=https://en.wikipedia.org/wiki/Spatial_anti-aliasing>Spatial anti-aliasing</a></li><li><a href="https://helpx.adobe.com/photoshop-elements/key-concepts/aliasing-anti-aliasing.html#:~:text=Anti-aliasing%20is%20the%20smoothing,make%20the%20edges%20appear%20smoother.">Aliasing & Anti-aliasing</a></li><li><a href=https://github.com/objetos/p5.quadrille.js/blob/main/examples/raster/sketch.js>Raster in p5.quadrille.js</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/711c158291d2b1879bf2054ec0ace03bca0d3da5 title="Last modified by Jrozou26092000 | June 27, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
+<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation>Rasterization: a Practical Implementation</a></li><li><a href=https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/n>The barycentric conspiracy</a></li><li><a href=https://en.wikipedia.org/wiki/Spatial_anti-aliasing>Spatial anti-aliasing</a></li><li><a href="https://helpx.adobe.com/photoshop-elements/key-concepts/aliasing-anti-aliasing.html#:~:text=Anti-aliasing%20is%20the%20smoothing,make%20the%20edges%20appear%20smoother.">Aliasing & Anti-aliasing</a></li><li><a href=https://github.com/objetos/p5.quadrille.js/blob/main/examples/raster/sketch.js>Raster in p5.quadrille.js</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/773662de2b3854d4d6f6c6d0016e24f1bbc85634 title="Last modified by cristian vargas | June 27, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
 <span>June 27, 2022</span></a></div></div><script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#taller-rasterización><strong>Taller Rasterización</strong></a></li><li><a href=#anti-aliasing-aa>Anti-aliasing (AA)</a><ul><li><ul><li><a href=#1-introducción><strong>1. Introducción</strong></a></li><li><a href=#2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong></a></li><li><a href=#3-métodos><strong>3. Métodos</strong></a></li><li><a href=#4-resultados><strong>4. Resultados</strong></a></li><li><a href=#5-discusión><strong>5. Discusión</strong></a></li><li><a href=#6-conclusión><strong>6. Conclusión</strong></a></li><li><a href=#7-referencias><strong>7. Referencias</strong></a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>

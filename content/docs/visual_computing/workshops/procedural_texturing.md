@@ -488,6 +488,8 @@ void main (void) {
 {{< p5-global-iframe id="prod_text" width="430" height="430" lib1="/showcase/scripts/p5.treegl.js">}}
 let pg;
 let truchetShader;
+let slider1, slider2;
+let n0 = n1 = n2 = n3 = false;
 
 function preload() {
   // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
@@ -510,6 +512,29 @@ function setup() {
   // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
   pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
   // set pg as texture
+  // Sliders
+  slider1 = createSlider(10, 100, 10, 10);
+  slider1.position(10, 10);
+
+  slider2 = createSlider(0.1, 1, 0.1, 0.1);
+  slider2.position(10, 30);
+
+  // Noise select
+  sel1 = createSelect();
+  sel1.position(10, 60);
+  sel1.option('Original');
+  sel1.option('Value Noise');
+  sel1.option('Gradient Noise');
+  sel1.option('Simplex Noise');
+  sel1.changed(changeNoise);
+
+  // set pg as texture
+  truchetShader.setUniform('scale', 10.0);
+  truchetShader.setUniform('speedFactor', 0.1);
+  truchetShader.setUniform('n0', true);
+  truchetShader.setUniform('n1', false);
+  truchetShader.setUniform('n2', false);
+  truchetShader.setUniform('n3', false);
   texture(pg);
   noStroke();
   
@@ -518,7 +543,20 @@ function setup() {
 function draw() {
   resetShader();
   background(33);
+  background(33);
   truchetShader.setUniform('u_time', frameCount);
+  truchetShader.setUniform('scale', slider1.value());
+  truchetShader.setUniform('speedFactor', slider2.value());
+  
+  if (n0){
+    truchetShader.setUniform('n0', true);
+  } else if (n1) {
+      truchetShader.setUniform('n1', true);
+  } else if(n2){
+      truchetShader.setUniform('n2', true);
+  } else if(n3){
+      truchetShader.setUniform('n3', true);
+  }
   pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
   orbitControl();
   // cylinder(100, 200);
@@ -535,6 +573,27 @@ function mouseMoved() {
   // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
   pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
 } 
+function changeNoise(){
+  let selection = sel1.value();
+  n0 = n1 = n2 = n3 = false;
+  resetUniformsFalse();
+  if (selection == 'Original') {
+      n0 = true;
+  } else if(selection == 'Value Noise'){
+      n1 = true;
+  } else if(selection == 'Gradient Noise'){
+      n2 = true;
+  } else if(selection == 'Simplex Noise'){
+      n3 = true;
+  }
+}
+
+function resetUniformsFalse(){
+    truchetShader.setUniform('n0', false);
+    truchetShader.setUniform('n1', false);
+    truchetShader.setUniform('n2', false);
+    truchetShader.setUniform('n3', false);
+}
     
 {{< /p5-global-iframe >}}
 

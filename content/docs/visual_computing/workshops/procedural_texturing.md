@@ -6,9 +6,6 @@ En este taller se estudió la técnica denominada **procedurtal texturing** con 
 
 Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D. Pero al ser generadas por computador, se hace necesario el uso de funciones de ruido, estas funciones de ruido permiten generar la sensación de aleatoriedad, como la que se genera en la naturaleza de los materiales rugosos, permitiendo así la generación de texturas mucho más realistas. Adicionalmente, estas texturas necesitan de diseños que permitan percibir profundidad entre otros rasgos para no verse solo como una imagen pintada en el objeto, para lo cual ya se utilizan modelos de iluminación y de texture mapping combinados con las técnicas de procedural texturing.
 
-
-
-
 ### **2. Revisión bibliográfica**
 
 Para empezar con la generación de texturas se realizó una revisión bibliográfica en cuanto a generación de patrones en el shader, posteriormente se exploró la parte de aleatorización de las texturas y finalmente se intentó realizar una revisión de modelos de iluminación.
@@ -208,150 +205,354 @@ void main() {
     gl_FragColor = vec4(color,1.0);
 }
 ```
+#### **2.3 Iluminación**
+
+Para poder que un objeto se vea con una textura, es necesario el uso de luces, estas se reflejarán según la forma y el material, dando efectos de brillo y profundidad. Dentro del modelo de luces más comunmente utilizado encontramos las siguientes luces:
+- Difusa: 
+
+Luz reflejada por un objeto en todas las direcciones. Es lo que comúnmente llamamos el color de un objeto.
+- Ambiente: 
+
+Se utiliza para simular la iluminación rebotada. Rellena las zonas en las que no hay luz directa, evitando así que esas zonas queden demasiado oscuras. Comúnmente este valor es proporcional al color difuso.
+- Especular: 
+
+Es la luz que se refleja con más fuerza en una dirección determinada, comúnmente en la reflexión del vector de dirección de la luz alrededor de la normal de la superficie. Este color no está relacionado con el color difuso.
+- Emisiva: 
+
+El propio objeto emite luz.
+
+Para este taler se decidio usar un modelo de iluminación con point light. Esto significa que hay un punto emitiendo luz que es el que genera la iluminación en la escena.
+
+En este caso el vertex shader recibe una posición de luz y debe calcular la dirección de la luz para cada vértice. Se supone que la posición de la luz está en el espacio de la cámara. Una vez que movemos la posición de los vértices al mismo espacio, el cálculo de la dirección es sencillo:
+
+dirección de la luz = posición de la luz - posición del vértice.
+
+De esta forma ya podemos usar la ecuación de la luz difusa que es 
+luz difusa: I = dirección ∙ normal
+
 ### **3. Métodos**
 
-Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitio completarlo.
+Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitio completarlo, por lo que solo se añadio una luz difusa desde el shader.
 ### **4. Resultados**
 
 A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del procedural texturing.
 
-{{< details title="p5 - anti-aliasing code" open=false >}}
+{{< details title="p5 - procedural texturing code" open=false >}}
 ```js
-{{</* p5-global-iframe id="prod_text" width="430" height="430" lib1="/showcase/scripts/p5.treegl.js">}}
-    let pg;
-    let truchetShader;
+let pg;
+let truchetShader;
+let lightShader;
 
-    function preload() {
-      // shader adapted from here: https://thebookofshaders.com/09/
-      // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
-      // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
-      truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
+function preload() {
+  // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
+  // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
+  truchetShader = loadShader('brickwall.vert', 'brickwall.frag');
+}
+
+function setup() {
+  createCanvas(400, 400, WEBGL);
+  // create frame buffer object to render the procedural texture
+  pg = createGraphics(400, 400, WEBGL);
+  textureMode(NORMAL);
+  noStroke();
+  pg.noStroke();
+  // use truchetShader to render onto pg
+  pg.shader(truchetShader);
+  // emitResolution, see:
+  // https://github.com/VisualComputing/p5.treegl#macros
+  pg.emitResolution(truchetShader);
+  // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+  // set pg as texture
+  texture(pg);
+  noStroke();
+  
+}
+
+function draw() {
+  resetShader();
+  background(33);
+  truchetShader.setUniform('u_time', frameCount);
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+  orbitControl();
+  // cylinder(100, 200);
+  sphere(100)
+  // cone(100,100);
+  // box(100);
+}
+function mouseMoved() {
+  // https://p5js.org/reference/#/p5.Shader/setUniform
+  let locX = mouseX - width / 2;
+  let locY = mouseY - height / 2;
+  let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'CLIP'});
+  truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
+  // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+} 
+```
+{{< /details >}}
+{{< details title="brickwall.vert" open=false >}}
+```glsl
+/*
+Vertex shader code to be coupled with brickwall.frag 
+Generated with treegl version 0.1.3
+*/
+precision mediump float;
+attribute vec3 aPosition;
+attribute vec2 aTexCoord;
+attribute vec3 aNormal;
+uniform mat4 uModelViewMatrix;
+uniform mat3 uNormalMatrix;
+varying vec2 texcoords2;
+varying vec3 normal3;
+varying vec3 position3;
+varying vec3 light_dir;
+varying vec3 eye;
+uniform vec4 light_pos;
+void main() {
+  texcoords2 = aTexCoord;
+  vec3 pos = vec3(uModelViewMatrix * vec4(aPosition, 1.0));
+  normal3 = vec3(normalize(uNormalMatrix * aNormal));
+  light_dir = vec3(light_pos) - pos;
+  eye = -pos;
+  position3 = aPosition;
+  gl_Position = vec4(aPosition, 1.0);
+}
+```
+{{< /details >}}
+{{< details title="brickwall.frag" open=false >}}
+```glsl
+precision mediump float;
+
+
+uniform vec2 u_resolution;
+uniform float u_time;
+varying vec2 texcoords2;
+varying vec3 light_dir;
+varying vec3 eye;
+varying vec3 normal3;
+
+float rand(vec2 n) {  
+	return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+}
+
+float noise(vec2 p){
+	vec2 ip = floor(p);
+	vec2 u = fract(p);
+    // igual a smoothstep
+	u = u*u*(3.0-2.0*u);
+	
+	float res = mix(
+		mix(rand(ip),rand(ip+vec2(1.0,0.0)),u.x),
+		mix(rand(ip+vec2(0.0,1.0)),rand(ip+vec2(1.0,1.0)),u.x),u.y);
+	return res*res;
+}
+vec2 random2(vec2 st){
+    st = vec2( dot(st,vec2(127.1,311.7)),
+              dot(st,vec2(269.5,183.3)) );
+    return -1.0 + 2.0*fract(sin(st)*43758.5453123);
+}
+
+// Gradient Noise by Inigo Quilez - iq/2013
+// https://www.shadertoy.com/view/XdXGW8
+float noise2(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    vec2 u = f*f*(3.0-2.0*f);
+
+    return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
+                     dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
+                     dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+}
+// Some useful functions
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+//
+// Description : GLSL 2D simplex noise function
+//      Author : Ian McEwan, Ashima Arts
+//  Maintainer : ijm
+//     Lastmod : 20110822 (ijm)
+//     License :
+//  Copyright (C) 2011 Ashima Arts. All rights reserved.
+//  Distributed under the MIT License. See LICENSE file.
+//  https://github.com/ashima/webgl-noise
+//
+float snoise(vec2 v) {
+
+    // Precompute values for skewed triangular grid
+    const vec4 C = vec4(0.211324865405187,
+                        // (3.0-sqrt(3.0))/6.0
+                        0.366025403784439,
+                        // 0.5*(sqrt(3.0)-1.0)
+                        -0.577350269189626,
+                        // -1.0 + 2.0 * C.x
+                        0.024390243902439);
+                        // 1.0 / 41.0
+
+    // First corner (x0)
+    vec2 i  = floor(v + dot(v, C.yy));
+    vec2 x0 = v - i + dot(i, C.xx);
+
+    // Other two corners (x1, x2)
+    vec2 i1 = vec2(0.0);
+    i1 = (x0.x > x0.y)? vec2(1.0, 0.0):vec2(0.0, 1.0);
+    vec2 x1 = x0.xy + C.xx - i1;
+    vec2 x2 = x0.xy + C.zz;
+
+    // Do some permutations to avoid
+    // truncation effects in permutation
+    i = mod289(i);
+    vec3 p = permute(
+            permute( i.y + vec3(0.0, i1.y, 1.0))
+                + i.x + vec3(0.0, i1.x, 1.0 ));
+
+    vec3 m = max(0.5 - vec3(
+                        dot(x0,x0),
+                        dot(x1,x1),
+                        dot(x2,x2)
+                        ), 0.0);
+
+    m = m*m ;
+    m = m*m ;
+
+    // Gradients:
+    //  41 pts uniformly over a line, mapped onto a diamond
+    //  The ring size 17*17 = 289 is close to a multiple
+    //      of 41 (41*7 = 287)
+
+    vec3 x = 2.0 * fract(p * C.www) - 1.0;
+    vec3 h = abs(x) - 0.5;
+    vec3 ox = floor(x + 0.5);
+    vec3 a0 = x - ox;
+
+    // Normalise gradients implicitly by scaling m
+    // Approximation of: m *= inversesqrt(a0*a0 + h*h);
+    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0+h*h);
+
+    // Compute final noise value at P
+    vec3 g = vec3(0.0);
+    g.x  = a0.x  * x0.x  + h.x  * x0.y;
+    g.yz = a0.yz * vec2(x1.x,x2.x) + h.yz * vec2(x1.y,x2.y);
+    return 130.0 * dot(m, g);
+}
+
+
+void main (void) {
+
+    //cantidad de ladrillos
+    float scale = 20.;
+    //factor de velocidad
+    float speedFactor = 10.;
+    speedFactor /= 100.;
+    // ruido de textura
+    vec2 positionVec4 = texcoords2;
+    positionVec4.x += u_time/(scale/speedFactor);
+    // Value Noise
+    float n = noise(positionVec4*500.0)+0.2;
+
+    // Gradient Noise
+    // float n = noise2(positionVec4*200.0)+0.2;
+
+    // Simplex Noise
+    // float n = snoise(positionVec4*200.0)+0.2;
+
+    // forma de ladrillos
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    st *= scale;
+    st.x += u_time*speedFactor;
+
+    float offset = step(1., mod(st.y,2.0));
+    float limitY =  step(.8, mod(st.y,1.));
+    float limitX = step(1.8, mod(st.x+offset,2.0));
+
+    if(limitY==1.||limitX==1.){
+        gl_FragColor = vec4(0.9*(n+.3),0.79*(n+.3),0.69*(n+.3),1.0);
+    }else{
+        gl_FragColor = vec4(.79*n,.25*n,.32*n,1.0);
     }
 
-    function setup() {
-      createCanvas(400, 400, WEBGL);
-      // create frame buffer object to render the procedural texture
-      pg = createGraphics(400, 400, WEBGL);
-      textureMode(NORMAL);
-      noStroke();
-      pg.noStroke();
-      // use truchetShader to render onto pg
-      pg.shader(truchetShader);
-      // emitResolution, see:
-      // https://github.com/VisualComputing/p5.treegl#macros
-      pg.emitResolution(truchetShader);
-      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-      // set pg as texture
-      texture(pg);
-    }
+    vec3 nor = normalize(normal3);
+    vec3 l = normalize(light_dir);
+    vec3 e = normalize(eye);
 
-    function draw() {
-      background(33);
-      truchetShader.setUniform('u_time', frameCount);
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-      orbitControl();
-      // cylinder(100, 200);
-      sphere(100)
-      // cone(100,100);
-
-      // ambientLight(60);
-      // let locX = mouseX - width / 2;
-      // let locY = mouseY - height / 2;
-      // let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'WORLD'});
-      // pointLight(255, 255, 255, light.x, light.y, light.z);
-      // box(100);
-    }
-    function mouseMoved() {
-      // https://p5js.org/reference/#/p5.Shader/setUniform
-      // pg.emitMousePosition(truchetShader);
-      let locX = mouseX - width / 2;
-      let locY = mouseY - height / 2;
-      let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'EYE'});
-      truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
-      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-    } 
-    
-{{< /p5-global-iframe */>}}
+    float intensity = max(dot(nor,l), 0.0);
+    gl_FragColor = vec4(intensity, intensity, intensity, 1) * gl_FragColor;
+}
 ```
 {{< /details >}}
 
 {{< p5-global-iframe id="prod_text" width="430" height="430" lib1="/showcase/scripts/p5.treegl.js">}}
-    let pg;
-    let truchetShader;
+let pg;
+let truchetShader;
 
-    function preload() {
-      // shader adapted from here: https://thebookofshaders.com/09/
-      // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
-      // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
-      truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
-    }
+function preload() {
+  // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
+  // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
+   truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
+}
 
-    function setup() {
-      createCanvas(400, 400, WEBGL);
-      // create frame buffer object to render the procedural texture
-      pg = createGraphics(400, 400, WEBGL);
-      textureMode(NORMAL);
-      noStroke();
-      pg.noStroke();
-      // use truchetShader to render onto pg
-      pg.shader(truchetShader);
-      // emitResolution, see:
-      // https://github.com/VisualComputing/p5.treegl#macros
-      pg.emitResolution(truchetShader);
-      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-      // set pg as texture
-      texture(pg);
-    }
+function setup() {
+  createCanvas(400, 400, WEBGL);
+  // create frame buffer object to render the procedural texture
+  pg = createGraphics(400, 400, WEBGL);
+  textureMode(NORMAL);
+  noStroke();
+  pg.noStroke();
+  // use truchetShader to render onto pg
+  pg.shader(truchetShader);
+  // emitResolution, see:
+  // https://github.com/VisualComputing/p5.treegl#macros
+  pg.emitResolution(truchetShader);
+  // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+  // set pg as texture
+  texture(pg);
+  noStroke();
+  
+}
 
-    function draw() {
-      background(33);
-      truchetShader.setUniform('u_time', frameCount);
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-      orbitControl();
-      // cylinder(100, 200);
-      sphere(100)
-      // cone(100,100);
-
-      // ambientLight(60);
-      // let locX = mouseX - width / 2;
-      // let locY = mouseY - height / 2;
-      // let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'WORLD'});
-      // pointLight(255, 255, 255, light.x, light.y, light.z);
-      // box(100);
-    }
-    function mouseMoved() {
-      // https://p5js.org/reference/#/p5.Shader/setUniform
-      // pg.emitMousePosition(truchetShader);
-      let locX = mouseX - width / 2;
-      let locY = mouseY - height / 2;
-      let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'EYE'});
-      truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
-      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-    } 
+function draw() {
+  resetShader();
+  background(33);
+  truchetShader.setUniform('u_time', frameCount);
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+  orbitControl();
+  // cylinder(100, 200);
+  sphere(100)
+  // cone(100,100);
+  // box(100);
+}
+function mouseMoved() {
+  // https://p5js.org/reference/#/p5.Shader/setUniform
+  let locX = mouseX - width / 2;
+  let locY = mouseY - height / 2;
+  let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'CLIP'});
+  truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
+  // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+} 
     
 {{< /p5-global-iframe >}}
 
 ### **5. Discusión**
 
-Partiendo de los resultados obtenidos tenemos que se puede evidenciar un *suavizado* en los bordes de cada triángulo generado dependiendo de qué fracción de los píxeles de los bordes estén por dentro y qué fracción estén por fuera. Por otra parte, y partiendo del hecho de que se realizó una subdivisión de cada píxel en 256 subpíxeles se evidencia que el proceso de rasterización que se lleva a cabo para determinar el promedio del color del píxel se hace de manera rápida debido a que el cálculo de las funciones de borde para cada subpíxel no significa una carga computacional grande.
+Fue muy interesante realizar este shader con todas estas opciones, sin embargo permanece como una incógnita el porqué después de determinado tiempo la función de generación de ruido deja de funcionar, provocando que el ruido se vuelve lineal y pierda la textura que existe al ejecutar el código inicialmente. Por otra parte se ve como para generar un ruido tan "simple" como es el de unos ladrillos, se necesita de muchas matemáticas, y cómo a pesar de que es un código más largo el del ruido simplex, es mucho más eficiente que el de gradiente, siendo el de gradiente tan corto. También vemos que hay otros tipos de ruido para generar otro tipo de texturas que son muy interesantes, pero no se alcanzaron a cubrir en este taller, y podrían servir como trabajo futuro estos son los ruidos celulares con el algoritmo de Voronoi o el movimiento fractal Browniano, capaces de generar formas como las alas de una libélula, o la textura de nubes y montañas.
 
 ### **6. Conclusión**
 
-1. El anti-aliasing es un proceso de mucha utilidad y aplicabilidad por ejemplo en el contexto de los videojuegos ya que provee de un algorítmo eficiente con el cual dar un efecto de suavizado de las figuras y de esta manera el usuario puede tener una visualización de los gráficos mucho más agradable.
+1. Para generar cualquiera de las texturas que se utilizan en los videojuegos, que requieren estar recalculandose según luces y perspectiva y acciones de los jugadores se requiere de un gran esfuerzo matematico, no en vano se necesitan las GPUs para todo esto.
 
-![Efecto del antialiasing.](/showcase/sketches/anti-aliasing-effect-.jpg "Efecto AA")
+2. A pesar de que se necesitan muchas matematicas para hacer figuras más realistas, al trabajar con una cuadricula es facil dibujar patrones, el reto en estos casos, es como hacer patrones que puedan ser interesantes y utiles para determinadas aplicaciones.
 
-2. 
+3. Gracias a personas como Ken Perlin, es que hoy dia podemos disfrutar de efectos por comútador que nos dan los grandes exitos de ciencia ficción y al realizar este trabajo se puede notar el esfuerzo que requieren las herramientas usadas en estas peliculas.
 
 ### **7. Referencias**
 
-- [Rasterization: a Practical Implementation](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation)
-- [The barycentric conspiracy](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/n)
-- [Spatial anti-aliasing](https://en.wikipedia.org/wiki/Spatial_anti-aliasing)
-- [Aliasing & Anti-aliasing](https://helpx.adobe.com/photoshop-elements/key-concepts/aliasing-anti-aliasing.html#:~:text=Anti-aliasing%20is%20the%20smoothing,make%20the%20edges%20appear%20smoother.)
-- [Raster in p5.quadrille.js](https://github.com/objetos/p5.quadrille.js/blob/main/examples/raster/sketch.js)
+- [The book of shaders](https://thebookofshaders.com/)
+- [VERTEX-SHADERS IN PROCESSING](https://visualcomputing.github.io/VertexShaders/)
+- [GLSL Tutorial – Lighting](https://www.lighthouse3d.com/tutorials/glsl-tutorial/lighting/)
 

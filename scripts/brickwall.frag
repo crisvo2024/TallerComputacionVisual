@@ -5,6 +5,12 @@ uniform vec2 u_resolution;
 uniform float u_time;
 varying vec2 texcoords2;
 
+uniform float scale;
+uniform float speedFactor;
+uniform bool n0;
+uniform bool n1;
+uniform bool n2;
+uniform bool n3;
 
 float rand(vec2 n) {  
 	return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
@@ -128,23 +134,27 @@ float snoise(vec2 v) {
 
 void main (void) {
 
-    //cantidad de ladrillos
-    float scale = 20.;
-    //factor de velocidad
-    float speedFactor = 10.;
-    speedFactor /= 100.;
+    // cantidad de ladrillos
+    // float scale = 20.;
+    // factor de velocidad
+    // float speedFactor = 10.;
+    // speedFactor /= 100.;
     // ruido de textura
     vec2 positionVec4 = texcoords2;
     positionVec4.x += u_time/(scale/speedFactor);
-    // Value Noise
-    float n = noise(positionVec4*500.0)+0.2;
 
-    // Gradient Noise
-    // float n = noise2(positionVec4*200.0)+0.2;
+    float n = 1.;
 
-    // Simplex Noise
-    // float n = snoise(positionVec4*200.0)+0.2;
-
+    if(n1) {
+        // Value Noise
+        n = noise(positionVec4*500.0)+0.2;
+    } else if(n2) {
+        // Gradient Noise
+        n = noise2(positionVec4*200.0)+0.2;
+    } else if(n3) {
+        // Simplex Noise
+        n = snoise(positionVec4*200.0)+0.2;
+    }
     // forma de ladrillos
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
     st *= scale;

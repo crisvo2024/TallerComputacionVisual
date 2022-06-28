@@ -1,7 +1,7 @@
 <!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Procedural texturing #  En este taller se estudió la técnica denominada procedurtal texturing con la cual se busca generar programáticamente texturas en el shader para mapearlas a figuras
 1. Introducción #  Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content><meta property="og:description" content="Procedural texturing #  En este taller se estudió la técnica denominada procedurtal texturing con la cual se busca generar programáticamente texturas en el shader para mapearlas a figuras
-1. Introducción #  Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D."><meta property="og:type" content="article"><meta property="og:url" content="https://visualcomputing.github.io/showcase/docs/visual_computing/workshops/procedural_texturing/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2022-06-27T16:53:25-05:00"><title>Procedural Texturing | Visual Computing</title><link rel=manifest href=/showcase/manifest.json><link rel=icon href=/showcase/favicon.png type=image/x-icon><link rel=stylesheet href=/showcase/book.min.ab46de3e725a6415339a37bba23a0067534a37289b063c9f8d011515a63097a8.css integrity="sha256-q0bePnJaZBUzmje7ojoAZ1NKNyibBjyfjQEVFaYwl6g=" crossorigin=anonymous><script defer src=/showcase/flexsearch.min.js></script>
-<script defer src=/showcase/en.search.min.82df45d06f5923d7136901cda1ff414d7fa4be09178e6024aa90e4140ad07f78.js integrity="sha256-gt9F0G9ZI9cTaQHNof9BTX+kvgkXjmAkqpDkFArQf3g=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+1. Introducción #  Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D."><meta property="og:type" content="article"><meta property="og:url" content="https://visualcomputing.github.io/showcase/docs/visual_computing/workshops/procedural_texturing/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2022-06-27T22:01:56-05:00"><title>Procedural Texturing | Visual Computing</title><link rel=manifest href=/showcase/manifest.json><link rel=icon href=/showcase/favicon.png type=image/x-icon><link rel=stylesheet href=/showcase/book.min.ab46de3e725a6415339a37bba23a0067534a37289b063c9f8d011515a63097a8.css integrity="sha256-q0bePnJaZBUzmje7ojoAZ1NKNyibBjyfjQEVFaYwl6g=" crossorigin=anonymous><script defer src=/showcase/flexsearch.min.js></script>
+<script defer src=/showcase/en.search.min.7b4794ad58fd9c29d385517feccb9a2eeb5291b791da4a9360f7097eedbf9217.js integrity="sha256-e0eUrVj9nCnThVF/7MuaLutSkbeR2kqTYPcJfu2/khc=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/showcase/><span>Visual Computing</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li class=book-section-flat><span>Visual Computing</span><ul><li><a href=/showcase/docs/visual_computing/logs/>Logs</a></li><li><a href=/showcase/docs/visual_computing/profiles/>Profiles</a></li><li><input type=checkbox id=section-29bdbf19413e05c2e701868288e4ab17 class=toggle>
 <label for=section-29bdbf19413e05c2e701868288e4ab17 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/>Template Examples</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/buttons/>Buttons</a></li><li><a href=/showcase/docs/visual_computing/template_examples/columns/>Columns</a></li><li><a href=/showcase/docs/visual_computing/template_examples/details/>Details</a></li><li><a href=/showcase/docs/visual_computing/template_examples/expand/>Expand</a></li><li><a href=/showcase/docs/visual_computing/template_examples/hints/>Hints</a></li><li><a href=/showcase/docs/visual_computing/template_examples/katex/>Katex</a></li><li><a href=/showcase/docs/visual_computing/template_examples/mermaid/>Mermaid</a></li><li><input type=checkbox id=section-619959e653037cbeb27c2fc2f70843f1 class=toggle>
 <label for=section-619959e653037cbeb27c2fc2f70843f1 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/p5/>P5</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/p5/div/>Div</a></li><li><a href=/showcase/docs/visual_computing/template_examples/p5/iframe/>Iframe</a></li></ul></li><li><a href=/showcase/docs/visual_computing/template_examples/tabs/>Tabs</a></li></ul></li><li><input type=checkbox id=section-43decbbd35cace6c4f05150232266586 class=toggle checked>
@@ -225,6 +225,8 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
               
     let pg;
     let truchetShader;
+    let slider1, slider2;
+    let n0 = n1 = n2 = n3 = false;
 
     function preload() {
       // shader adapted from here: https://thebookofshaders.com/09/
@@ -247,13 +249,49 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
       pg.emitResolution(truchetShader);
       // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
       pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+
+      // Sliders
+      slider1 = createSlider(10, 100, 10, 10);
+      slider1.position(10, 10);
+
+      slider2 = createSlider(0.1, 1, 0.1, 0.1);
+      slider2.position(10, 30);
+
+      // Coloring select
+      sel1 = createSelect();
+      sel1.position(10, 60);
+      sel1.option('Original');
+      sel1.option('Value Noise');
+      sel1.option('Gradient Noise');
+      sel1.option('Simplex Noise');
+      sel1.changed(changeNoise);
+
       // set pg as texture
+      truchetShader.setUniform('scale', 10.0);
+      truchetShader.setUniform('speedFactor', 0.1);
+      truchetShader.setUniform('n0', true);
+      truchetShader.setUniform('n1', false);
+      truchetShader.setUniform('n2', false);
+      truchetShader.setUniform('n3', false);
       texture(pg);
     }
 
     function draw() {
       background(33);
       truchetShader.setUniform('u_time', frameCount);
+      truchetShader.setUniform('scale', slider1.value());
+      truchetShader.setUniform('speedFactor', slider2.value());
+      
+      if (n0){
+        truchetShader.setUniform('n0', true);
+      } else if (n1) {
+          truchetShader.setUniform('n1', true);
+      } else if(n2){
+          truchetShader.setUniform('n2', true);
+      } else if(n3){
+          truchetShader.setUniform('n3', true);
+      }
+      
       pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
       orbitControl();
       // cylinder(100, 200);
@@ -277,6 +315,28 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
       // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
       pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
     } 
+
+    function changeNoise(){
+      let selection = sel1.value();
+      n0 = n1 = n2 = n3 = false;
+      resetUniformsFalse();
+      if (selection == 'Original') {
+          n0 = true;
+      } else if(selection == 'Value Noise'){
+          n1 = true;
+      } else if(selection == 'Gradient Noise'){
+          n2 = true;
+      } else if(selection == 'Simplex Noise'){
+          n3 = true;
+      }
+    }
+
+    function resetUniformsFalse(){
+        truchetShader.setUniform('n0', false);
+        truchetShader.setUniform('n1', false);
+        truchetShader.setUniform('n2', false);
+        truchetShader.setUniform('n3', false);
+    }
     
 
             </script>
@@ -287,5 +347,5 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
       "></iframe><h3 id=5-discusión><strong>5. Discusión</strong>
 <a class=anchor href=#5-discusi%c3%b3n>#</a></h3><p>Partiendo de los resultados obtenidos tenemos que se puede evidenciar un <em>suavizado</em> en los bordes de cada triángulo generado dependiendo de qué fracción de los píxeles de los bordes estén por dentro y qué fracción estén por fuera. Por otra parte, y partiendo del hecho de que se realizó una subdivisión de cada píxel en 256 subpíxeles se evidencia que el proceso de rasterización que se lleva a cabo para determinar el promedio del color del píxel se hace de manera rápida debido a que el cálculo de las funciones de borde para cada subpíxel no significa una carga computacional grande.</p><h3 id=6-conclusión><strong>6. Conclusión</strong>
 <a class=anchor href=#6-conclusi%c3%b3n>#</a></h3><ol><li>El anti-aliasing es un proceso de mucha utilidad y aplicabilidad por ejemplo en el contexto de los videojuegos ya que provee de un algorítmo eficiente con el cual dar un efecto de suavizado de las figuras y de esta manera el usuario puede tener una visualización de los gráficos mucho más agradable.</li></ol><p><img src=/showcase/sketches/anti-aliasing-effect-.jpg alt="Efecto del antialiasing." title="Efecto AA"></p><ol start=2><li></li></ol><h3 id=7-referencias><strong>7. Referencias</strong>
-<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation>Rasterization: a Practical Implementation</a></li><li><a href=https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/n>The barycentric conspiracy</a></li><li><a href=https://en.wikipedia.org/wiki/Spatial_anti-aliasing>Spatial anti-aliasing</a></li><li><a href="https://helpx.adobe.com/photoshop-elements/key-concepts/aliasing-anti-aliasing.html#:~:text=Anti-aliasing%20is%20the%20smoothing,make%20the%20edges%20appear%20smoother.">Aliasing & Anti-aliasing</a></li><li><a href=https://github.com/objetos/p5.quadrille.js/blob/main/examples/raster/sketch.js>Raster in p5.quadrille.js</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/eb724adb8b1f4540dd4b0b2dec20acf92525df32 title="Last modified by cristian vargas | June 27, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
-<span>June 27, 2022</span></a></div></div><script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#procedural-texturing><strong>Procedural texturing</strong></a><ul><li><ul><li><a href=#1-introducción><strong>1. Introducción</strong></a></li><li><a href=#2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong></a></li><li><a href=#3-métodos><strong>3. Métodos</strong></a></li><li><a href=#4-resultados><strong>4. Resultados</strong></a></li><li><a href=#5-discusión><strong>5. Discusión</strong></a></li><li><a href=#6-conclusión><strong>6. Conclusión</strong></a></li><li><a href=#7-referencias><strong>7. Referencias</strong></a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>
+<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation>Rasterization: a Practical Implementation</a></li><li><a href=https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/n>The barycentric conspiracy</a></li><li><a href=https://en.wikipedia.org/wiki/Spatial_anti-aliasing>Spatial anti-aliasing</a></li><li><a href="https://helpx.adobe.com/photoshop-elements/key-concepts/aliasing-anti-aliasing.html#:~:text=Anti-aliasing%20is%20the%20smoothing,make%20the%20edges%20appear%20smoother.">Aliasing & Anti-aliasing</a></li><li><a href=https://github.com/objetos/p5.quadrille.js/blob/main/examples/raster/sketch.js>Raster in p5.quadrille.js</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/a1e3ddf5b4e86e5c56164094b925fa2ecee3dac2 title="Last modified by Jrozou26092000 | June 28, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
+<span>June 28, 2022</span></a></div></div><script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#procedural-texturing><strong>Procedural texturing</strong></a><ul><li><ul><li><a href=#1-introducción><strong>1. Introducción</strong></a></li><li><a href=#2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong></a></li><li><a href=#3-métodos><strong>3. Métodos</strong></a></li><li><a href=#4-resultados><strong>4. Resultados</strong></a></li><li><a href=#5-discusión><strong>5. Discusión</strong></a></li><li><a href=#6-conclusión><strong>6. Conclusión</strong></a></li><li><a href=#7-referencias><strong>7. Referencias</strong></a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>

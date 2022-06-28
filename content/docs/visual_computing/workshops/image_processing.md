@@ -304,73 +304,72 @@ Para la realización de este ejercicio se llevó a cabo en primer lugar una revi
 {{< details title="mask.frag" open=false >}}
 ```js
 {{</* p5-global-iframe id="breath" width="675" height="525" >}}
-    
     precision mediump float;
 
-uniform sampler2D texture;
-uniform vec2 texOffset;
-// holds the 3x3 kernel
-uniform float mask[9];
-// mouse vector position
-uniform vec2 u_mouse;
-// resolution
-uniform vec2 u_resolution;
-// region shape
-uniform bool region_shape;
+    uniform sampler2D texture;
+    uniform vec2 texOffset;
+    // holds the 3x3 kernel
+    uniform float mask[9];
+    // mouse vector position
+    uniform vec2 u_mouse;
+    // resolution
+    uniform vec2 u_resolution;
+    // region shape
+    uniform bool region_shape;
 
-// we need our interpolated tex coord
-varying vec2 texcoords2;
+    // we need our interpolated tex coord
+    varying vec2 texcoords2;
 
-void main() {
-    bool condition;
-    vec2 st = gl_FragCoord.xy/u_resolution;
-    if(region_shape){
-        vec2 mouse_n = u_mouse.xy/u_resolution;
-        float region_x = step(mouse_n.x - 0.1, st.x) - step(mouse_n.x + 0.1, st.x);
-        float region_y = step(mouse_n.y - 0.1, st.y) - step(mouse_n.y + 0.1, st.y);
-        condition = region_x == 1.0 && region_y == 1.0;
-    } else {
-        float region = distance(st, u_mouse.xy/u_resolution);
-        condition = region < 0.1;
-    }
-    if(condition){
-        // 1. Use offset to move along texture space.
-        // In this case to find the texcoords of the texel neighbours.
-        vec2 tc0 = texcoords2 + vec2(-texOffset.s, -texOffset.t);
-        vec2 tc1 = texcoords2 + vec2(         0.0, -texOffset.t);
-        vec2 tc2 = texcoords2 + vec2(+texOffset.s, -texOffset.t);
-        vec2 tc3 = texcoords2 + vec2(-texOffset.s,          0.0);
-        // origin (current fragment texcoords)
-        vec2 tc4 = texcoords2 + vec2(         0.0,          0.0);
-        vec2 tc5 = texcoords2 + vec2(+texOffset.s,          0.0);
-        vec2 tc6 = texcoords2 + vec2(-texOffset.s, +texOffset.t);
-        vec2 tc7 = texcoords2 + vec2(         0.0, +texOffset.t);
-        vec2 tc8 = texcoords2 + vec2(+texOffset.s, +texOffset.t);
-
-        // 2. Sample texel neighbours within the rgba array
-        vec4 rgba[9];
-        rgba[0] = texture2D(texture, tc0);
-        rgba[1] = texture2D(texture, tc1);
-        rgba[2] = texture2D(texture, tc2);
-        rgba[3] = texture2D(texture, tc3);
-        rgba[4] = texture2D(texture, tc4);
-        rgba[5] = texture2D(texture, tc5);
-        rgba[6] = texture2D(texture, tc6);
-        rgba[7] = texture2D(texture, tc7);
-        rgba[8] = texture2D(texture, tc8);
-
-        // 3. Apply convolution kernel
-        vec4 convolution;
-        for (int i = 0; i < 9; i++) {
-            convolution += rgba[i]*mask[i];
+    void main() {
+        bool condition;
+        vec2 st = gl_FragCoord.xy/u_resolution;
+        if(region_shape){
+            vec2 mouse_n = u_mouse.xy/u_resolution;
+            float region_x = step(mouse_n.x - 0.1, st.x) - step(mouse_n.x + 0.1, st.x);
+            float region_y = step(mouse_n.y - 0.1, st.y) - step(mouse_n.y + 0.1, st.y);
+            condition = region_x == 1.0 && region_y == 1.0;
+        } else {
+            float region = distance(st, u_mouse.xy/u_resolution);
+            condition = region < 0.1;
         }
+        if(condition){
+            // 1. Use offset to move along texture space.
+            // In this case to find the texcoords of the texel neighbours.
+            vec2 tc0 = texcoords2 + vec2(-texOffset.s, -texOffset.t);
+            vec2 tc1 = texcoords2 + vec2(         0.0, -texOffset.t);
+            vec2 tc2 = texcoords2 + vec2(+texOffset.s, -texOffset.t);
+            vec2 tc3 = texcoords2 + vec2(-texOffset.s,          0.0);
+            // origin (current fragment texcoords)
+            vec2 tc4 = texcoords2 + vec2(         0.0,          0.0);
+            vec2 tc5 = texcoords2 + vec2(+texOffset.s,          0.0);
+            vec2 tc6 = texcoords2 + vec2(-texOffset.s, +texOffset.t);
+            vec2 tc7 = texcoords2 + vec2(         0.0, +texOffset.t);
+            vec2 tc8 = texcoords2 + vec2(+texOffset.s, +texOffset.t);
 
-        // 4. Set color from convolution
-        gl_FragColor = vec4(convolution.rgb, 1.0);
-    } else {
-        gl_FragColor = texture2D(texture, texcoords2);
-    }
-}    
+            // 2. Sample texel neighbours within the rgba array
+            vec4 rgba[9];
+            rgba[0] = texture2D(texture, tc0);
+            rgba[1] = texture2D(texture, tc1);
+            rgba[2] = texture2D(texture, tc2);
+            rgba[3] = texture2D(texture, tc3);
+            rgba[4] = texture2D(texture, tc4);
+            rgba[5] = texture2D(texture, tc5);
+            rgba[6] = texture2D(texture, tc6);
+            rgba[7] = texture2D(texture, tc7);
+            rgba[8] = texture2D(texture, tc8);
+
+            // 3. Apply convolution kernel
+            vec4 convolution;
+            for (int i = 0; i < 9; i++) {
+                convolution += rgba[i]*mask[i];
+            }
+
+            // 4. Set color from convolution
+            gl_FragColor = vec4(convolution.rgb, 1.0);
+        } else {
+            gl_FragColor = texture2D(texture, texcoords2);
+        }
+    }   
 {{< /p5-global-iframe */>}}
 ```
 {{< /details >}}
@@ -536,32 +535,32 @@ void main() {
 {{</* p5-global-iframe id="breath" width="675" height="525" >}}
     precision mediump float;
 
-uniform sampler2D texture;
-uniform float radio;
-uniform float scale;
+    uniform sampler2D texture;
+    uniform float radio;
+    uniform float scale;
 
-// mouse vector position
-uniform vec2 u_mouse;
+    // mouse vector position
+    uniform vec2 u_mouse;
 
-// resolution
-uniform vec2 u_resolution;
+    // resolution
+    uniform vec2 u_resolution;
 
-vec2 curvatureGenerator(vec2 toPow,  float dis){
-    float x = dis/radio;
-    return toPow*(1.0-x)*exp(-2.0*x*x);
-}
-
-void main() {
-    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-    gl_FragColor = texture2D(texture, vec2(uv.x, 1. - uv.y));
-    vec2 center = u_mouse.xy;
-    float dis = distance(gl_FragCoord.xy, center);
-    if(dis < radio){
-        vec2 disV = gl_FragCoord.xy - center;
-        vec2 trueUV = (gl_FragCoord.xy - (curvatureGenerator(disV,dis) * scale) ) / u_resolution.xy;
-    	gl_FragColor = texture2D(texture, vec2(trueUV.x, 1. - trueUV.y));  
+    vec2 curvatureGenerator(vec2 toPow,  float dis){
+        float x = dis/radio;
+        return toPow*(1.0-x)*exp(-2.0*x*x);
     }
-}
+
+    void main() {
+        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+        gl_FragColor = texture2D(texture, vec2(uv.x, 1. - uv.y));
+        vec2 center = u_mouse.xy;
+        float dis = distance(gl_FragCoord.xy, center);
+        if(dis < radio){
+            vec2 disV = gl_FragCoord.xy - center;
+            vec2 trueUV = (gl_FragCoord.xy - (curvatureGenerator(disV,dis) * scale) ) / u_resolution.xy;
+            gl_FragColor = texture2D(texture, vec2(trueUV.x, 1. - trueUV.y));  
+        }
+    }
 {{< /p5-global-iframe */>}}
 ```
 {{< /details >}}
@@ -731,115 +730,130 @@ void main() {
 {{< details title="coloring.frag" open=false >}}
 ```js
 {{</* p5-global-iframe id="breath" width="675" height="525" >}}
-precision mediump float;
+    precision mediump float;
 
-// uniforms are defined and sent by the sketch
-uniform bool grey_scale;
-uniform sampler2D texture;
-uniform bool original;
-uniform bool luma;
-uniform bool hsv;
-uniform bool hsl;
-uniform bool lab;
+    // uniforms are defined and sent by the sketch
+    uniform bool grey_scale;
+    uniform sampler2D texture;
+    uniform bool original;
+    uniform bool luma;
+    uniform bool hsv;
+    uniform bool hsl;
+    uniform bool lab;
 
-// interpolated texcoord (same name and type as in vertex shader)
-varying vec2 texcoords2;
+    // interpolated texcoord (same name and type as in vertex shader)
+    varying vec2 texcoords2;
 
-// returns luma of given texel
-float apply_luma(vec3 texel) {
-  return 0.299 * texel.r + 0.587 * texel.g + 0.114 * texel.b;
-}
+    // returns luma of given texel
+    float apply_luma(vec3 texel) {
+    return 0.299 * texel.r + 0.587 * texel.g + 0.114 * texel.b;
+    }
 
-// returns hsv of given texel
-float apply_hsv(vec3 texel) {
-    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-    vec4 p = mix(vec4(texel.bg, K.wz), vec4(texel.gb, K.xy), step(texel.b, texel.g));
-    vec4 q = mix(vec4(p.xyw, texel.r), vec4(texel.r, p.yzx), step(p.x, texel.r));
+    // -----------------HSL & HSV ----------------------------------
 
-    float d = q.x - min(q.w, q.y);
-    float e = 1.0e-10;
-    return abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x;
-}
+    float get_hs(float r, float g, float b, float cMax, float cMin, bool flag, float val) {
+        float h = 0.0;
+        float s = 0.0;
 
-// returns hls of given texel
-float apply_hsl(vec3 texel) {
-    float h = 0.0;
-	float s = 0.0;
-	float l = 0.0;
-	float r = texel.r;
-	float g = texel.g;
-	float b = texel.b;
-	float cMin = min( r, min( g, b ) );
-	float cMax = max( r, max( g, b ) );
+        if ( cMax > cMin ) {
+            float cDelta = cMax - cMin;
 
-	l = ( cMax + cMin ) / 2.0;
-	if ( cMax > cMin ) {
-		float cDelta = cMax - cMin;
-        
-		s = l < .0 ? cDelta / ( cMax + cMin ) : cDelta / ( 2.0 - ( cMax + cMin ) );
-        
-		if ( r == cMax ) {
-			h = ( g - b ) / cDelta;
-		} else if ( g == cMax ) {
-			h = 2.0 + ( b - r ) / cDelta;
-		} else {
-			h = 4.0 + ( r - g ) / cDelta;
-		}
+            if(flag){
+                s = val < .0 ? cDelta / ( cMax + cMin ) : cDelta / ( 2.0 - ( cMax + cMin ) );
+            } else {
+                s = cMax == 0.0 ? 0.0 : cDelta / cMax;
+            }
+                    
+            if ( r == cMax ) {
+                h = ( g - b ) / cDelta;
+            } else if ( g == cMax ) {
+                h = 2.0 + ( b - r ) / cDelta;
+            } else {
+                h = 4.0 + ( r - g ) / cDelta;
+            }
 
-		if ( h < 0.0) {
-			h += 6.0;
-		}
-		h = h / 6.0;
-	}
-	return h, s, l;
-}
+            if ( h < 0.0) {
+                h += 6.0;
+            }
+            h = h / 6.0;
+        }
+        return h, s;
+    }
 
-// ------------------------- RGB TO CIELAB ------------------------------------
+    // returns hls of given texel
+    float apply_hsl(vec3 texel) {
+        float r = texel.r;
+        float g = texel.g;
+        float b = texel.b;
+        float cMin = min( r, min( g, b ) );
+        float cMax = max( r, max( g, b ) );
 
-vec3 rgb2xyz (vec3 texel) {
-	vec3 tmp;
-    tmp.x = ( texel.r > 0.04045 ) ? pow( ( texel.r + 0.055 ) / 1.055, 2.4 ) : texel.r / 12.92;
-    tmp.y = ( texel.g > 0.04045 ) ? pow( ( texel.g + 0.055 ) / 1.055, 2.4 ) : texel.g / 12.92,
-    tmp.z = ( texel.b > 0.04045 ) ? pow( ( texel.b + 0.055 ) / 1.055, 2.4 ) : texel.b / 12.92;
-    const mat3 mat = mat3(
-		0.4124, 0.3576, 0.1805,
-        0.2126, 0.7152, 0.0722,
-        0.0193, 0.1192, 0.9505 
-	);
-    return 100.0 * tmp * mat;
-}
+        float l = ( cMax + cMin ) / 2.0;
+        float h, s = get_hs(r, g, b, cMax, cMin, true, l);
+        return h, s, l;
+    }
 
-vec3 xyz2lab (vec3 xyz) {
-	vec3 n = xyz / vec3(95.047, 100, 108.883);
-    vec3 v;
-    v.x = ( n.x > 0.008856 ) ? pow( n.x, 1.0 / 3.0 ) : ( 7.787 * n.x ) + ( 16.0 / 116.0 );
-    v.y = ( n.y > 0.008856 ) ? pow( n.y, 1.0 / 3.0 ) : ( 7.787 * n.y ) + ( 16.0 / 116.0 );
-    v.z = ( n.z > 0.008856 ) ? pow( n.z, 1.0 / 3.0 ) : ( 7.787 * n.z ) + ( 16.0 / 116.0 );
-    return vec3(( 116.0 * v.y ) - 16.0, 500.0 * ( v.x - v.y ), 200.0 * ( v.y - v.z ));
-}
+    // returns hsv of given texel
+    float apply_hsv(vec3 texel) {
+        float r = texel.r;
+        float g = texel.g;
+        float b = texel.b;
+        float cMin = min( r, min( g, b ) );
+        float cMax = max( r, max( g, b ) );
 
-vec3 apply_lab(vec3 texel){
-	return xyz2lab(rgb2xyz(texel));
-}
+        float v = cMax;
+        float h, s = get_hs(r, g, b, cMax, cMin, false, v);
+        return h, s, v;
+    }
 
-// -----------------------------------------------------------
+    // -----------------------------------------------------------
 
-void main() {
-  // texture2D(texture, texcoords2) samples texture at texcoords2 
-  // and returns the normalized texel color
-  vec4 texel = texture2D(texture, texcoords2);
-  if (original){
-      gl_FragColor = texel;
-  } else if(luma){
-      gl_FragColor = vec4((vec3(apply_luma(texel.rgb))), 1.0);
-  } else if(hsv){
-      gl_FragColor = vec4((vec3(apply_hsv(texel.rgb))), 1.0);
-  } else if(hsl){
-      gl_FragColor = vec4((vec3(apply_hsl(texel.rgb))), 1.0);
-  } else if(lab){
-	gl_FragColor = vec4((apply_lab(texel.rgb)), 1.0);
-  }
-}
+    // ------------------------- RGB TO CIELAB -------------------
+
+    vec3 rgb2xyz (vec3 texel) {
+        vec3 tmp;
+        tmp.x = ( texel.r > 0.04045 ) ? pow( ( texel.r + 0.055 ) / 1.055, 2.4 ) : texel.r / 12.92;
+        tmp.y = ( texel.g > 0.04045 ) ? pow( ( texel.g + 0.055 ) / 1.055, 2.4 ) : texel.g / 12.92,
+        tmp.z = ( texel.b > 0.04045 ) ? pow( ( texel.b + 0.055 ) / 1.055, 2.4 ) : texel.b / 12.92;
+        const mat3 mat = mat3(
+            0.4124, 0.3576, 0.1805,
+            0.2126, 0.7152, 0.0722,
+            0.0193, 0.1192, 0.9505 
+        );
+        return 100.0 * tmp * mat;
+    }
+
+    vec3 xyz2lab (vec3 xyz) {
+        vec3 n = xyz / vec3(95.047, 100, 108.883);
+        vec3 v;
+        v.x = ( n.x > 0.008856 ) ? pow( n.x, 1.0 / 3.0 ) : ( 7.787 * n.x ) + ( 16.0 / 116.0 );
+        v.y = ( n.y > 0.008856 ) ? pow( n.y, 1.0 / 3.0 ) : ( 7.787 * n.y ) + ( 16.0 / 116.0 );
+        v.z = ( n.z > 0.008856 ) ? pow( n.z, 1.0 / 3.0 ) : ( 7.787 * n.z ) + ( 16.0 / 116.0 );
+        return vec3(( 116.0 * v.y ) - 16.0, 500.0 * ( v.x - v.y ), 200.0 * ( v.y - v.z ));
+    }
+
+    vec3 apply_lab(vec3 texel){
+        return xyz2lab(rgb2xyz(texel));
+    }
+
+    // -----------------------------------------------------------
+
+    void main() {
+    // texture2D(texture, texcoords2) samples texture at texcoords2 
+    // and returns the normalized texel color
+    vec4 texel = texture2D(texture, texcoords2);
+    if (original){
+        gl_FragColor = texel;
+    } else if(luma){
+        gl_FragColor = vec4((vec3(apply_luma(texel.rgb))), 1.0);
+    } else if(hsv){
+        gl_FragColor = vec4((vec3(apply_hsv(texel.rgb))), 1.0);
+    } else if(hsl){
+        gl_FragColor = vec4((vec3(apply_hsl(texel.rgb))), 1.0);
+    } else if(lab){
+        gl_FragColor = vec4((apply_lab(texel.rgb)), 1.0);
+    }
+    }
 {{< /p5-global-iframe */>}}
 ```
 {{< /details >}}

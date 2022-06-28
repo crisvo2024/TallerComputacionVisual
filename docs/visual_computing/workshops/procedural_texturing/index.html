@@ -1,7 +1,7 @@
 <!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Procedural texturing #  En este taller se estudió la técnica denominada procedurtal texturing con la cual se busca generar programáticamente texturas en el shader para mapearlas a figuras
 1. Introducción #  Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content><meta property="og:description" content="Procedural texturing #  En este taller se estudió la técnica denominada procedurtal texturing con la cual se busca generar programáticamente texturas en el shader para mapearlas a figuras
 1. Introducción #  Para este taller quisimos explorar las diferentes posibilidades que tenía el procedural texturing. Esta técnica para generar texturas en el shader es muy útil dado que es muy eficiente al aprovechar las capacidades de las GPU y permite una mayor flexibilidad al momento de generar escenarios en 3D."><meta property="og:type" content="article"><meta property="og:url" content="https://visualcomputing.github.io/showcase/docs/visual_computing/workshops/procedural_texturing/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2022-06-27T22:01:56-05:00"><title>Procedural Texturing | Visual Computing</title><link rel=manifest href=/showcase/manifest.json><link rel=icon href=/showcase/favicon.png type=image/x-icon><link rel=stylesheet href=/showcase/book.min.ab46de3e725a6415339a37bba23a0067534a37289b063c9f8d011515a63097a8.css integrity="sha256-q0bePnJaZBUzmje7ojoAZ1NKNyibBjyfjQEVFaYwl6g=" crossorigin=anonymous><script defer src=/showcase/flexsearch.min.js></script>
-<script defer src=/showcase/en.search.min.7b4794ad58fd9c29d385517feccb9a2eeb5291b791da4a9360f7097eedbf9217.js integrity="sha256-e0eUrVj9nCnThVF/7MuaLutSkbeR2kqTYPcJfu2/khc=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<script defer src=/showcase/en.search.min.1b9a4b68c633d65bd02a0e3ed110b0f6851abd0e6000cd5af1139cb5907cea8d.js integrity="sha256-G5pLaMYz1lvQKg4+0RCw9oUavQ5gAM1a8ROctZB86o0=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/showcase/><span>Visual Computing</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li class=book-section-flat><span>Visual Computing</span><ul><li><a href=/showcase/docs/visual_computing/logs/>Logs</a></li><li><a href=/showcase/docs/visual_computing/profiles/>Profiles</a></li><li><input type=checkbox id=section-29bdbf19413e05c2e701868288e4ab17 class=toggle>
 <label for=section-29bdbf19413e05c2e701868288e4ab17 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/>Template Examples</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/buttons/>Buttons</a></li><li><a href=/showcase/docs/visual_computing/template_examples/columns/>Columns</a></li><li><a href=/showcase/docs/visual_computing/template_examples/details/>Details</a></li><li><a href=/showcase/docs/visual_computing/template_examples/expand/>Expand</a></li><li><a href=/showcase/docs/visual_computing/template_examples/hints/>Hints</a></li><li><a href=/showcase/docs/visual_computing/template_examples/katex/>Katex</a></li><li><a href=/showcase/docs/visual_computing/template_examples/mermaid/>Mermaid</a></li><li><input type=checkbox id=section-619959e653037cbeb27c2fc2f70843f1 class=toggle>
 <label for=section-619959e653037cbeb27c2fc2f70843f1 class="flex justify-between"><a href=/showcase/docs/visual_computing/template_examples/p5/>P5</a></label><ul><li><a href=/showcase/docs/visual_computing/template_examples/p5/div/>Div</a></li><li><a href=/showcase/docs/visual_computing/template_examples/p5/iframe/>Iframe</a></li></ul></li><li><a href=/showcase/docs/visual_computing/template_examples/tabs/>Tabs</a></li></ul></li><li><input type=checkbox id=section-43decbbd35cace6c4f05150232266586 class=toggle checked>
@@ -151,66 +151,246 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    gl_FragColor <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec4</span>(color,<span style=color:#ae81ff>1.0</span>);
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=3-métodos><strong>3. Métodos</strong>
-<a class=anchor href=#3-m%c3%a9todos>#</a></h3><p>Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitio completarlo.</p><h3 id=4-resultados><strong>4. Resultados</strong>
-<a class=anchor href=#4-resultados>#</a></h3><p>A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del procedural texturing.</p><details><summary>p5 - anti-aliasing code</summary><div class=markdown-inner><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span>{{<span style=color:#f92672>&lt;</span> <span style=color:#a6e22e>p5</span><span style=color:#f92672>-</span><span style=color:#a6e22e>global</span><span style=color:#f92672>-</span><span style=color:#a6e22e>iframe</span> <span style=color:#a6e22e>id</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;prod_text&#34;</span> <span style=color:#a6e22e>width</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;430&#34;</span> <span style=color:#a6e22e>height</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;430&#34;</span> <span style=color:#a6e22e>lib1</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;/showcase/scripts/p5.treegl.js&#34;</span><span style=color:#f92672>&gt;</span>}}
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>pg</span>;
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>truchetShader</span>;
+</span></span></code></pre></div><h4 id=23-iluminación><strong>2.3 Iluminación</strong>
+<a class=anchor href=#23-iluminaci%c3%b3n>#</a></h4><p>Para poder que un objeto se vea con una textura, es necesario el uso de luces, estas se reflejarán según la forma y el material, dando efectos de brillo y profundidad. Dentro del modelo de luces más comunmente utilizado encontramos las siguientes luces:</p><ul><li>Difusa:</li></ul><p>Luz reflejada por un objeto en todas las direcciones. Es lo que comúnmente llamamos el color de un objeto.</p><ul><li>Ambiente:</li></ul><p>Se utiliza para simular la iluminación rebotada. Rellena las zonas en las que no hay luz directa, evitando así que esas zonas queden demasiado oscuras. Comúnmente este valor es proporcional al color difuso.</p><ul><li>Especular:</li></ul><p>Es la luz que se refleja con más fuerza en una dirección determinada, comúnmente en la reflexión del vector de dirección de la luz alrededor de la normal de la superficie. Este color no está relacionado con el color difuso.</p><ul><li>Emisiva:</li></ul><p>El propio objeto emite luz.</p><p>Para este taler se decidio usar un modelo de iluminación con point light. Esto significa que hay un punto emitiendo luz que es el que genera la iluminación en la escena.</p><p>En este caso el vertex shader recibe una posición de luz y debe calcular la dirección de la luz para cada vértice. Se supone que la posición de la luz está en el espacio de la cámara. Una vez que movemos la posición de los vértices al mismo espacio, el cálculo de la dirección es sencillo:</p><p>dirección de la luz = posición de la luz - posición del vértice.</p><p>De esta forma ya podemos usar la ecuación de la luz difusa que es
+luz difusa: I = dirección ∙ normal</p><h3 id=3-métodos><strong>3. Métodos</strong>
+<a class=anchor href=#3-m%c3%a9todos>#</a></h3><p>Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitio completarlo, por lo que solo se añadio una luz difusa desde el shader.</p><h3 id=4-resultados><strong>4. Resultados</strong>
+<a class=anchor href=#4-resultados>#</a></h3><p>A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del procedural texturing.</p><p><details><summary>p5 - procedural texturing code</summary><div class=markdown-inner><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-js data-lang=js><span style=display:flex><span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>pg</span>;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>truchetShader</span>;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>lightShader</span>;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>preload</span>() {
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// shader adapted from here: https://thebookofshaders.com/09/
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// truchetShader = readShader(&#39;brickwall.frag&#39;, { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>truchetShader</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>loadShader</span>(<span style=color:#e6db74>&#39;/showcase/scripts/brickwall.vert&#39;</span>, <span style=color:#e6db74>&#39;/showcase/scripts/brickwall.frag&#39;</span>);
+</span></span><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>preload</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// truchetShader = readShader(&#39;brickwall.frag&#39;, { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>truchetShader</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>loadShader</span>(<span style=color:#e6db74>&#39;brickwall.vert&#39;</span>, <span style=color:#e6db74>&#39;brickwall.frag&#39;</span>);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>setup</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>createCanvas</span>(<span style=color:#ae81ff>400</span>, <span style=color:#ae81ff>400</span>, <span style=color:#a6e22e>WEBGL</span>);
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// create frame buffer object to render the procedural texture
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>pg</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>createGraphics</span>(<span style=color:#ae81ff>400</span>, <span style=color:#ae81ff>400</span>, <span style=color:#a6e22e>WEBGL</span>);
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>textureMode</span>(<span style=color:#a6e22e>NORMAL</span>);
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>noStroke</span>();
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>noStroke</span>();
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// use truchetShader to render onto pg
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>shader</span>(<span style=color:#a6e22e>truchetShader</span>);
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// emitResolution, see:
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// https://github.com/VisualComputing/p5.treegl#macros
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>emitResolution</span>(<span style=color:#a6e22e>truchetShader</span>);
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>quad</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>);
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// set pg as texture
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>texture</span>(<span style=color:#a6e22e>pg</span>);
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>noStroke</span>();
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>draw</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>resetShader</span>();
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>background</span>(<span style=color:#ae81ff>33</span>);
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>truchetShader</span>.<span style=color:#a6e22e>setUniform</span>(<span style=color:#e6db74>&#39;u_time&#39;</span>, <span style=color:#a6e22e>frameCount</span>);
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>quad</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>);
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>orbitControl</span>();
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// cylinder(100, 200);
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>sphere</span>(<span style=color:#ae81ff>100</span>)
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// cone(100,100);
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// box(100);
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span><span style=display:flex><span><span style=color:#66d9ef>function</span> <span style=color:#a6e22e>mouseMoved</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// https://p5js.org/reference/#/p5.Shader/setUniform
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>locX</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>mouseX</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>width</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>locY</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>mouseY</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>height</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>light</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>treeLocation</span>(<span style=color:#a6e22e>createVector</span>(<span style=color:#f92672>-</span><span style=color:#a6e22e>locX</span>,<span style=color:#f92672>-</span><span style=color:#a6e22e>locY</span>,<span style=color:#ae81ff>1.5</span>),{ <span style=color:#a6e22e>from</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;SCREEN&#39;</span>, <span style=color:#a6e22e>to</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;CLIP&#39;</span>});
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>truchetShader</span>.<span style=color:#a6e22e>setUniform</span>(<span style=color:#e6db74>&#39;light_pos&#39;</span>,[<span style=color:#a6e22e>light</span>.<span style=color:#a6e22e>x</span>,<span style=color:#a6e22e>light</span>.<span style=color:#a6e22e>y</span>,<span style=color:#a6e22e>light</span>.<span style=color:#a6e22e>z</span>,<span style=color:#ae81ff>1.</span>] );
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>quad</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>);
+</span></span><span style=display:flex><span>} 
+</span></span></code></pre></div></div></details><details><summary>brickwall.vert</summary><div class=markdown-inner><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-glsl data-lang=glsl><span style=display:flex><span><span style=color:#75715e>/*
+</span></span></span><span style=display:flex><span><span style=color:#75715e>Vertex shader code to be coupled with brickwall.frag 
+</span></span></span><span style=display:flex><span><span style=color:#75715e>Generated with treegl version 0.1.3
+</span></span></span><span style=display:flex><span><span style=color:#75715e>*/</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>precision</span> <span style=color:#66d9ef>mediump</span> <span style=color:#66d9ef>float</span>;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>attribute</span> <span style=color:#66d9ef>vec3</span> aPosition;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>attribute</span> <span style=color:#66d9ef>vec2</span> aTexCoord;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>attribute</span> <span style=color:#66d9ef>vec3</span> aNormal;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>uniform</span> mat4 uModelViewMatrix;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>uniform</span> mat3 uNormalMatrix;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec2</span> texcoords2;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> normal3;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> position3;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> light_dir;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> eye;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>uniform</span> <span style=color:#66d9ef>vec4</span> light_pos;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>void</span> main() {
+</span></span><span style=display:flex><span>  texcoords2 <span style=color:#f92672>=</span> aTexCoord;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>vec3</span> pos <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec3</span>(uModelViewMatrix <span style=color:#f92672>*</span> <span style=color:#66d9ef>vec4</span>(aPosition, <span style=color:#ae81ff>1.0</span>));
+</span></span><span style=display:flex><span>  normal3 <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec3</span>(normalize(uNormalMatrix <span style=color:#f92672>*</span> aNormal));
+</span></span><span style=display:flex><span>  light_dir <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec3</span>(light_pos) <span style=color:#f92672>-</span> pos;
+</span></span><span style=display:flex><span>  eye <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>pos;
+</span></span><span style=display:flex><span>  position3 <span style=color:#f92672>=</span> aPosition;
+</span></span><span style=display:flex><span>  gl_Position <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec4</span>(aPosition, <span style=color:#ae81ff>1.0</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div></details><details><summary>brickwall.frag</summary><div class=markdown-inner><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-glsl data-lang=glsl><span style=display:flex><span><span style=color:#66d9ef>precision</span> <span style=color:#66d9ef>mediump</span> <span style=color:#66d9ef>float</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>uniform</span> <span style=color:#66d9ef>vec2</span> u_resolution;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>uniform</span> <span style=color:#66d9ef>float</span> u_time;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec2</span> texcoords2;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> light_dir;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> eye;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>varying</span> <span style=color:#66d9ef>vec3</span> normal3;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>float</span> rand(<span style=color:#66d9ef>vec2</span> n) {  
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> fract(sin(dot(n, <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>12.9898</span>, <span style=color:#ae81ff>4.1414</span>))) <span style=color:#f92672>*</span> <span style=color:#ae81ff>43758.5453</span>);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>float</span> noise(<span style=color:#66d9ef>vec2</span> p){
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>vec2</span> ip <span style=color:#f92672>=</span> floor(p);
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>vec2</span> u <span style=color:#f92672>=</span> fract(p);
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// igual a smoothstep</span>
+</span></span><span style=display:flex><span>	u <span style=color:#f92672>=</span> u<span style=color:#f92672>*</span>u<span style=color:#f92672>*</span>(<span style=color:#ae81ff>3.0</span><span style=color:#f92672>-</span><span style=color:#ae81ff>2.0</span><span style=color:#f92672>*</span>u);
+</span></span><span style=display:flex><span>	
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>float</span> res <span style=color:#f92672>=</span> mix(
+</span></span><span style=display:flex><span>		mix(rand(ip),rand(ip<span style=color:#f92672>+</span><span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>,<span style=color:#ae81ff>0.0</span>)),u.x),
+</span></span><span style=display:flex><span>		mix(rand(ip<span style=color:#f92672>+</span><span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>,<span style=color:#ae81ff>1.0</span>)),rand(ip<span style=color:#f92672>+</span><span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>,<span style=color:#ae81ff>1.0</span>)),u.x),u.y);
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> res<span style=color:#f92672>*</span>res;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#66d9ef>vec2</span> random2(<span style=color:#66d9ef>vec2</span> st){
+</span></span><span style=display:flex><span>    st <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec2</span>( dot(st,<span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>127.1</span>,<span style=color:#ae81ff>311.7</span>)),
+</span></span><span style=display:flex><span>              dot(st,<span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>269.5</span>,<span style=color:#ae81ff>183.3</span>)) );
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1.0</span> <span style=color:#f92672>+</span> <span style=color:#ae81ff>2.0</span><span style=color:#f92672>*</span>fract(sin(st)<span style=color:#f92672>*</span><span style=color:#ae81ff>43758.5453123</span>);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Gradient Noise by Inigo Quilez - iq/2013</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// https://www.shadertoy.com/view/XdXGW8</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>float</span> noise2(<span style=color:#66d9ef>vec2</span> st) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> i <span style=color:#f92672>=</span> floor(st);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> f <span style=color:#f92672>=</span> fract(st);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> u <span style=color:#f92672>=</span> f<span style=color:#f92672>*</span>f<span style=color:#f92672>*</span>(<span style=color:#ae81ff>3.0</span><span style=color:#f92672>-</span><span style=color:#ae81ff>2.0</span><span style=color:#f92672>*</span>f);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> mix( mix( dot( random2(i <span style=color:#f92672>+</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>,<span style=color:#ae81ff>0.0</span>) ), f <span style=color:#f92672>-</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>,<span style=color:#ae81ff>0.0</span>) ),
+</span></span><span style=display:flex><span>                     dot( random2(i <span style=color:#f92672>+</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>,<span style=color:#ae81ff>0.0</span>) ), f <span style=color:#f92672>-</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>,<span style=color:#ae81ff>0.0</span>) ), u.x),
+</span></span><span style=display:flex><span>                mix( dot( random2(i <span style=color:#f92672>+</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>,<span style=color:#ae81ff>1.0</span>) ), f <span style=color:#f92672>-</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>,<span style=color:#ae81ff>1.0</span>) ),
+</span></span><span style=display:flex><span>                     dot( random2(i <span style=color:#f92672>+</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>,<span style=color:#ae81ff>1.0</span>) ), f <span style=color:#f92672>-</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>,<span style=color:#ae81ff>1.0</span>) ), u.x), u.y);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#75715e>// Some useful functions</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>vec3</span> mod289(<span style=color:#66d9ef>vec3</span> x) { <span style=color:#66d9ef>return</span> x <span style=color:#f92672>-</span> floor(x <span style=color:#f92672>*</span> (<span style=color:#ae81ff>1.0</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>289.0</span>)) <span style=color:#f92672>*</span> <span style=color:#ae81ff>289.0</span>; }
+</span></span><span style=display:flex><span><span style=color:#66d9ef>vec2</span> mod289(<span style=color:#66d9ef>vec2</span> x) { <span style=color:#66d9ef>return</span> x <span style=color:#f92672>-</span> floor(x <span style=color:#f92672>*</span> (<span style=color:#ae81ff>1.0</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>289.0</span>)) <span style=color:#f92672>*</span> <span style=color:#ae81ff>289.0</span>; }
+</span></span><span style=display:flex><span><span style=color:#66d9ef>vec3</span> permute(<span style=color:#66d9ef>vec3</span> x) { <span style=color:#66d9ef>return</span> mod289(((x<span style=color:#f92672>*</span><span style=color:#ae81ff>34.0</span>)<span style=color:#f92672>+</span><span style=color:#ae81ff>1.0</span>)<span style=color:#f92672>*</span>x); }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Description : GLSL 2D simplex noise function</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//      Author : Ian McEwan, Ashima Arts</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//  Maintainer : ijm</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//     Lastmod : 20110822 (ijm)</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//     License :</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//  Copyright (C) 2011 Ashima Arts. All rights reserved.</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//  Distributed under the MIT License. See LICENSE file.</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//  https://github.com/ashima/webgl-noise</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>float</span> snoise(<span style=color:#66d9ef>vec2</span> v) {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Precompute values for skewed triangular grid</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>const</span> <span style=color:#66d9ef>vec4</span> C <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec4</span>(<span style=color:#ae81ff>0.211324865405187</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#75715e>// (3.0-sqrt(3.0))/6.0</span>
+</span></span><span style=display:flex><span>                        <span style=color:#ae81ff>0.366025403784439</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#75715e>// 0.5*(sqrt(3.0)-1.0)</span>
+</span></span><span style=display:flex><span>                        <span style=color:#f92672>-</span><span style=color:#ae81ff>0.577350269189626</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#75715e>// -1.0 + 2.0 * C.x</span>
+</span></span><span style=display:flex><span>                        <span style=color:#ae81ff>0.024390243902439</span>);
+</span></span><span style=display:flex><span>                        <span style=color:#75715e>// 1.0 / 41.0</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// First corner (x0)</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> i  <span style=color:#f92672>=</span> floor(v <span style=color:#f92672>+</span> dot(v, C.yy));
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> x0 <span style=color:#f92672>=</span> v <span style=color:#f92672>-</span> i <span style=color:#f92672>+</span> dot(i, C.xx);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Other two corners (x1, x2)</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> i1 <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>);
+</span></span><span style=display:flex><span>    i1 <span style=color:#f92672>=</span> (x0.x <span style=color:#f92672>&gt;</span> x0.y)<span style=color:#f92672>?</span> <span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>1.0</span>, <span style=color:#ae81ff>0.0</span>)<span style=color:#f92672>:</span><span style=color:#66d9ef>vec2</span>(<span style=color:#ae81ff>0.0</span>, <span style=color:#ae81ff>1.0</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> x1 <span style=color:#f92672>=</span> x0.xy <span style=color:#f92672>+</span> C.xx <span style=color:#f92672>-</span> i1;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> x2 <span style=color:#f92672>=</span> x0.xy <span style=color:#f92672>+</span> C.zz;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Do some permutations to avoid</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// truncation effects in permutation</span>
+</span></span><span style=display:flex><span>    i <span style=color:#f92672>=</span> mod289(i);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> p <span style=color:#f92672>=</span> permute(
+</span></span><span style=display:flex><span>            permute( i.y <span style=color:#f92672>+</span> <span style=color:#66d9ef>vec3</span>(<span style=color:#ae81ff>0.0</span>, i1.y, <span style=color:#ae81ff>1.0</span>))
+</span></span><span style=display:flex><span>                <span style=color:#f92672>+</span> i.x <span style=color:#f92672>+</span> <span style=color:#66d9ef>vec3</span>(<span style=color:#ae81ff>0.0</span>, i1.x, <span style=color:#ae81ff>1.0</span> ));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> m <span style=color:#f92672>=</span> max(<span style=color:#ae81ff>0.5</span> <span style=color:#f92672>-</span> <span style=color:#66d9ef>vec3</span>(
+</span></span><span style=display:flex><span>                        dot(x0,x0),
+</span></span><span style=display:flex><span>                        dot(x1,x1),
+</span></span><span style=display:flex><span>                        dot(x2,x2)
+</span></span><span style=display:flex><span>                        ), <span style=color:#ae81ff>0.0</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    m <span style=color:#f92672>=</span> m<span style=color:#f92672>*</span>m ;
+</span></span><span style=display:flex><span>    m <span style=color:#f92672>=</span> m<span style=color:#f92672>*</span>m ;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Gradients:</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>//  41 pts uniformly over a line, mapped onto a diamond</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>//  The ring size 17*17 = 289 is close to a multiple</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>//      of 41 (41*7 = 287)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>2.0</span> <span style=color:#f92672>*</span> fract(p <span style=color:#f92672>*</span> C.www) <span style=color:#f92672>-</span> <span style=color:#ae81ff>1.0</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> h <span style=color:#f92672>=</span> abs(x) <span style=color:#f92672>-</span> <span style=color:#ae81ff>0.5</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> ox <span style=color:#f92672>=</span> floor(x <span style=color:#f92672>+</span> <span style=color:#ae81ff>0.5</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> a0 <span style=color:#f92672>=</span> x <span style=color:#f92672>-</span> ox;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Normalise gradients implicitly by scaling m</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Approximation of: m *= inversesqrt(a0*a0 + h*h);</span>
+</span></span><span style=display:flex><span>    m <span style=color:#f92672>*=</span> <span style=color:#ae81ff>1.79284291400159</span> <span style=color:#f92672>-</span> <span style=color:#ae81ff>0.85373472095314</span> <span style=color:#f92672>*</span> (a0<span style=color:#f92672>*</span>a0<span style=color:#f92672>+</span>h<span style=color:#f92672>*</span>h);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Compute final noise value at P</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> g <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec3</span>(<span style=color:#ae81ff>0.0</span>);
+</span></span><span style=display:flex><span>    g.x  <span style=color:#f92672>=</span> a0.x  <span style=color:#f92672>*</span> x0.x  <span style=color:#f92672>+</span> h.x  <span style=color:#f92672>*</span> x0.y;
+</span></span><span style=display:flex><span>    g.yz <span style=color:#f92672>=</span> a0.yz <span style=color:#f92672>*</span> <span style=color:#66d9ef>vec2</span>(x1.x,x2.x) <span style=color:#f92672>+</span> h.yz <span style=color:#f92672>*</span> <span style=color:#66d9ef>vec2</span>(x1.y,x2.y);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>130.0</span> <span style=color:#f92672>*</span> dot(m, g);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>void</span> main (<span style=color:#66d9ef>void</span>) {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>//cantidad de ladrillos</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> scale <span style=color:#f92672>=</span> <span style=color:#ae81ff>20.</span>;
+</span></span><span style=display:flex><span>    <span style=color:#75715e>//factor de velocidad</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> speedFactor <span style=color:#f92672>=</span> <span style=color:#ae81ff>10.</span>;
+</span></span><span style=display:flex><span>    speedFactor <span style=color:#f92672>/=</span> <span style=color:#ae81ff>100.</span>;
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// ruido de textura</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> positionVec4 <span style=color:#f92672>=</span> texcoords2;
+</span></span><span style=display:flex><span>    positionVec4.x <span style=color:#f92672>+=</span> u_time<span style=color:#f92672>/</span>(scale<span style=color:#f92672>/</span>speedFactor);
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Value Noise</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> n <span style=color:#f92672>=</span> noise(positionVec4<span style=color:#f92672>*</span><span style=color:#ae81ff>500.0</span>)<span style=color:#f92672>+</span><span style=color:#ae81ff>0.2</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Gradient Noise</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// float n = noise2(positionVec4*200.0)+0.2;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Simplex Noise</span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// float n = snoise(positionVec4*200.0)+0.2;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// forma de ladrillos</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec2</span> st <span style=color:#f92672>=</span> gl_FragCoord.xy<span style=color:#f92672>/</span>u_resolution.xy;
+</span></span><span style=display:flex><span>    st <span style=color:#f92672>*=</span> scale;
+</span></span><span style=display:flex><span>    st.x <span style=color:#f92672>+=</span> u_time<span style=color:#f92672>*</span>speedFactor;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> offset <span style=color:#f92672>=</span> step(<span style=color:#ae81ff>1.</span>, mod(st.y,<span style=color:#ae81ff>2.0</span>));
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> limitY <span style=color:#f92672>=</span>  step(<span style=color:#ae81ff>.8</span>, mod(st.y,<span style=color:#ae81ff>1.</span>));
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> limitX <span style=color:#f92672>=</span> step(<span style=color:#ae81ff>1.8</span>, mod(st.x<span style=color:#f92672>+</span>offset,<span style=color:#ae81ff>2.0</span>));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span>(limitY<span style=color:#f92672>==</span><span style=color:#ae81ff>1.</span><span style=color:#f92672>||</span>limitX<span style=color:#f92672>==</span><span style=color:#ae81ff>1.</span>){
+</span></span><span style=display:flex><span>        gl_FragColor <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec4</span>(<span style=color:#ae81ff>0.9</span><span style=color:#f92672>*</span>(n<span style=color:#f92672>+</span><span style=color:#ae81ff>.3</span>),<span style=color:#ae81ff>0.79</span><span style=color:#f92672>*</span>(n<span style=color:#f92672>+</span><span style=color:#ae81ff>.3</span>),<span style=color:#ae81ff>0.69</span><span style=color:#f92672>*</span>(n<span style=color:#f92672>+</span><span style=color:#ae81ff>.3</span>),<span style=color:#ae81ff>1.0</span>);
+</span></span><span style=display:flex><span>    }<span style=color:#66d9ef>else</span>{
+</span></span><span style=display:flex><span>        gl_FragColor <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec4</span>(<span style=color:#ae81ff>.79</span><span style=color:#f92672>*</span>n,<span style=color:#ae81ff>.25</span><span style=color:#f92672>*</span>n,<span style=color:#ae81ff>.32</span><span style=color:#f92672>*</span>n,<span style=color:#ae81ff>1.0</span>);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>setup</span>() {
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>createCanvas</span>(<span style=color:#ae81ff>400</span>, <span style=color:#ae81ff>400</span>, <span style=color:#a6e22e>WEBGL</span>);
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// create frame buffer object to render the procedural texture
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>pg</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>createGraphics</span>(<span style=color:#ae81ff>400</span>, <span style=color:#ae81ff>400</span>, <span style=color:#a6e22e>WEBGL</span>);
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>textureMode</span>(<span style=color:#a6e22e>NORMAL</span>);
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>noStroke</span>();
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>noStroke</span>();
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// use truchetShader to render onto pg
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>shader</span>(<span style=color:#a6e22e>truchetShader</span>);
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// emitResolution, see:
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// https://github.com/VisualComputing/p5.treegl#macros
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>emitResolution</span>(<span style=color:#a6e22e>truchetShader</span>);
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>quad</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// set pg as texture
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>texture</span>(<span style=color:#a6e22e>pg</span>);
-</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> nor <span style=color:#f92672>=</span> normalize(normal3);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> l <span style=color:#f92672>=</span> normalize(light_dir);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>vec3</span> e <span style=color:#f92672>=</span> normalize(eye);
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>draw</span>() {
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>background</span>(<span style=color:#ae81ff>33</span>);
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>truchetShader</span>.<span style=color:#a6e22e>setUniform</span>(<span style=color:#e6db74>&#39;u_time&#39;</span>, <span style=color:#a6e22e>frameCount</span>);
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>quad</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>orbitControl</span>();
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// cylinder(100, 200);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>sphere</span>(<span style=color:#ae81ff>100</span>)
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// cone(100,100);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// ambientLight(60);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// let locX = mouseX - width / 2;
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// let locY = mouseY - height / 2;
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// let light = treeLocation(createVector(-locX,-locY,1.5),{ from: &#39;SCREEN&#39;, to: &#39;WORLD&#39;});
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// pointLight(255, 255, 255, light.x, light.y, light.z);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// box(100);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>function</span> <span style=color:#a6e22e>mouseMoved</span>() {
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// https://p5js.org/reference/#/p5.Shader/setUniform
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// pg.emitMousePosition(truchetShader);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>locX</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>mouseX</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>width</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
-</span></span><span style=display:flex><span>      <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>locY</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>mouseY</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>height</span> <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
-</span></span><span style=display:flex><span>      <span style=color:#66d9ef>let</span> <span style=color:#a6e22e>light</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>treeLocation</span>(<span style=color:#a6e22e>createVector</span>(<span style=color:#f92672>-</span><span style=color:#a6e22e>locX</span>,<span style=color:#f92672>-</span><span style=color:#a6e22e>locY</span>,<span style=color:#ae81ff>1.5</span>),{ <span style=color:#a6e22e>from</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;SCREEN&#39;</span>, <span style=color:#a6e22e>to</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;EYE&#39;</span>});
-</span></span><span style=display:flex><span>      <span style=color:#a6e22e>truchetShader</span>.<span style=color:#a6e22e>setUniform</span>(<span style=color:#e6db74>&#39;light_pos&#39;</span>,[<span style=color:#a6e22e>light</span>.<span style=color:#a6e22e>x</span>,<span style=color:#a6e22e>light</span>.<span style=color:#a6e22e>y</span>,<span style=color:#a6e22e>light</span>.<span style=color:#a6e22e>z</span>,<span style=color:#ae81ff>1.</span>] );
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#a6e22e>pg</span>.<span style=color:#a6e22e>quad</span>(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>    } 
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>{{<span style=color:#f92672>&lt;</span> <span style=color:#960050;background-color:#1e0010>/p5-global-iframe &gt;}}</span>
-</span></span></code></pre></div></div></details><iframe id=prod_text style=width:430px;height:430px srcdoc="
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>float</span> intensity <span style=color:#f92672>=</span> max(dot(nor,l), <span style=color:#ae81ff>0.0</span>);
+</span></span><span style=display:flex><span>    gl_FragColor <span style=color:#f92672>=</span> <span style=color:#66d9ef>vec4</span>(intensity, intensity, intensity, <span style=color:#ae81ff>1</span>) <span style=color:#f92672>*</span> gl_FragColor;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div></details></p><iframe id=prod_text style=width:430px;height:430px srcdoc="
         <!DOCTYPE html>
         <html>
           <head>
@@ -223,120 +403,114 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
             
             <script>
               
-    let pg;
-    let truchetShader;
-    let slider1, slider2;
-    let n0 = n1 = n2 = n3 = false;
+let pg;
+let truchetShader;
+let slider1, slider2;
+let n0 = n1 = n2 = n3 = false;
 
-    function preload() {
-      // shader adapted from here: https://thebookofshaders.com/09/
-      // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
-      // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
-      truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
-    }
+function preload() {
+  // truchetShader = readShader('brickwall.frag', { matrices: Tree.mvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3});
+  // console.log(parseVertexShader({ matrices: Tree.mvMatrix|Tree.pMatrix|Tree.pmvMatrix, varyings: Tree.texcoords2|Tree.normal3|Tree.position3}))
+   truchetShader = loadShader('/showcase/scripts/brickwall.vert', '/showcase/scripts/brickwall.frag');
+}
 
-    function setup() {
-      createCanvas(400, 400, WEBGL);
-      // create frame buffer object to render the procedural texture
-      pg = createGraphics(400, 400, WEBGL);
-      textureMode(NORMAL);
-      noStroke();
-      pg.noStroke();
-      // use truchetShader to render onto pg
-      pg.shader(truchetShader);
-      // emitResolution, see:
-      // https://github.com/VisualComputing/p5.treegl#macros
-      pg.emitResolution(truchetShader);
-      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+function setup() {
+  createCanvas(400, 400, WEBGL);
+  // create frame buffer object to render the procedural texture
+  pg = createGraphics(400, 400, WEBGL);
+  textureMode(NORMAL);
+  noStroke();
+  pg.noStroke();
+  // use truchetShader to render onto pg
+  pg.shader(truchetShader);
+  // emitResolution, see:
+  // https://github.com/VisualComputing/p5.treegl#macros
+  pg.emitResolution(truchetShader);
+  // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+  // set pg as texture
+  // Sliders
+  slider1 = createSlider(10, 100, 10, 10);
+  slider1.position(10, 10);
 
-      // Sliders
-      slider1 = createSlider(10, 100, 10, 10);
-      slider1.position(10, 10);
+  slider2 = createSlider(0.1, 1, 0.1, 0.1);
+  slider2.position(10, 30);
 
-      slider2 = createSlider(0.1, 1, 0.1, 0.1);
-      slider2.position(10, 30);
+  // Noise select
+  sel1 = createSelect();
+  sel1.position(10, 60);
+  sel1.option('Original');
+  sel1.option('Value Noise');
+  sel1.option('Gradient Noise');
+  sel1.option('Simplex Noise');
+  sel1.changed(changeNoise);
 
-      // Coloring select
-      sel1 = createSelect();
-      sel1.position(10, 60);
-      sel1.option('Original');
-      sel1.option('Value Noise');
-      sel1.option('Gradient Noise');
-      sel1.option('Simplex Noise');
-      sel1.changed(changeNoise);
+  // set pg as texture
+  truchetShader.setUniform('scale', 10.0);
+  truchetShader.setUniform('speedFactor', 0.1);
+  truchetShader.setUniform('n0', true);
+  truchetShader.setUniform('n1', false);
+  truchetShader.setUniform('n2', false);
+  truchetShader.setUniform('n3', false);
+  texture(pg);
+  noStroke();
+  
+}
 
-      // set pg as texture
-      truchetShader.setUniform('scale', 10.0);
-      truchetShader.setUniform('speedFactor', 0.1);
-      truchetShader.setUniform('n0', true);
-      truchetShader.setUniform('n1', false);
-      truchetShader.setUniform('n2', false);
-      truchetShader.setUniform('n3', false);
-      texture(pg);
-    }
+function draw() {
+  resetShader();
+  background(33);
+  background(33);
+  truchetShader.setUniform('u_time', frameCount);
+  truchetShader.setUniform('scale', slider1.value());
+  truchetShader.setUniform('speedFactor', slider2.value());
+  
+  if (n0){
+    truchetShader.setUniform('n0', true);
+  } else if (n1) {
+      truchetShader.setUniform('n1', true);
+  } else if(n2){
+      truchetShader.setUniform('n2', true);
+  } else if(n3){
+      truchetShader.setUniform('n3', true);
+  }
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+  orbitControl();
+  // cylinder(100, 200);
+  sphere(100)
+  // cone(100,100);
+  // box(100);
+}
+function mouseMoved() {
+  // https://p5js.org/reference/#/p5.Shader/setUniform
+  let locX = mouseX - width / 2;
+  let locY = mouseY - height / 2;
+  let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'CLIP'});
+  truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
+  // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
+  pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+} 
+function changeNoise(){
+  let selection = sel1.value();
+  n0 = n1 = n2 = n3 = false;
+  resetUniformsFalse();
+  if (selection == 'Original') {
+      n0 = true;
+  } else if(selection == 'Value Noise'){
+      n1 = true;
+  } else if(selection == 'Gradient Noise'){
+      n2 = true;
+  } else if(selection == 'Simplex Noise'){
+      n3 = true;
+  }
+}
 
-    function draw() {
-      background(33);
-      truchetShader.setUniform('u_time', frameCount);
-      truchetShader.setUniform('scale', slider1.value());
-      truchetShader.setUniform('speedFactor', slider2.value());
-      
-      if (n0){
-        truchetShader.setUniform('n0', true);
-      } else if (n1) {
-          truchetShader.setUniform('n1', true);
-      } else if(n2){
-          truchetShader.setUniform('n2', true);
-      } else if(n3){
-          truchetShader.setUniform('n3', true);
-      }
-      
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-      orbitControl();
-      // cylinder(100, 200);
-      sphere(100)
-      // cone(100,100);
-
-      // ambientLight(60);
-      // let locX = mouseX - width / 2;
-      // let locY = mouseY - height / 2;
-      // let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'WORLD'});
-      // pointLight(255, 255, 255, light.x, light.y, light.z);
-      // box(100);
-    }
-    function mouseMoved() {
-      // https://p5js.org/reference/#/p5.Shader/setUniform
-      // pg.emitMousePosition(truchetShader);
-      let locX = mouseX - width / 2;
-      let locY = mouseY - height / 2;
-      let light = treeLocation(createVector(-locX,-locY,1.5),{ from: 'SCREEN', to: 'EYE'});
-      truchetShader.setUniform('light_pos',[light.x,light.y,light.z,1.] );
-      // pg clip-space quad (i.e., both x and y vertex coordinates ∈ [-1..1])
-      pg.quad(-1, -1, 1, -1, 1, 1, -1, 1);
-    } 
-
-    function changeNoise(){
-      let selection = sel1.value();
-      n0 = n1 = n2 = n3 = false;
-      resetUniformsFalse();
-      if (selection == 'Original') {
-          n0 = true;
-      } else if(selection == 'Value Noise'){
-          n1 = true;
-      } else if(selection == 'Gradient Noise'){
-          n2 = true;
-      } else if(selection == 'Simplex Noise'){
-          n3 = true;
-      }
-    }
-
-    function resetUniformsFalse(){
-        truchetShader.setUniform('n0', false);
-        truchetShader.setUniform('n1', false);
-        truchetShader.setUniform('n2', false);
-        truchetShader.setUniform('n3', false);
-    }
+function resetUniformsFalse(){
+    truchetShader.setUniform('n0', false);
+    truchetShader.setUniform('n1', false);
+    truchetShader.setUniform('n2', false);
+    truchetShader.setUniform('n3', false);
+}
     
 
             </script>
@@ -345,7 +519,7 @@ La forma simplex para N dimesiones es una forma de N+1 esquinas, en otras palabr
           </body>
         </html>
       "></iframe><h3 id=5-discusión><strong>5. Discusión</strong>
-<a class=anchor href=#5-discusi%c3%b3n>#</a></h3><p>Partiendo de los resultados obtenidos tenemos que se puede evidenciar un <em>suavizado</em> en los bordes de cada triángulo generado dependiendo de qué fracción de los píxeles de los bordes estén por dentro y qué fracción estén por fuera. Por otra parte, y partiendo del hecho de que se realizó una subdivisión de cada píxel en 256 subpíxeles se evidencia que el proceso de rasterización que se lleva a cabo para determinar el promedio del color del píxel se hace de manera rápida debido a que el cálculo de las funciones de borde para cada subpíxel no significa una carga computacional grande.</p><h3 id=6-conclusión><strong>6. Conclusión</strong>
-<a class=anchor href=#6-conclusi%c3%b3n>#</a></h3><ol><li>El anti-aliasing es un proceso de mucha utilidad y aplicabilidad por ejemplo en el contexto de los videojuegos ya que provee de un algorítmo eficiente con el cual dar un efecto de suavizado de las figuras y de esta manera el usuario puede tener una visualización de los gráficos mucho más agradable.</li></ol><p><img src=/showcase/sketches/anti-aliasing-effect-.jpg alt="Efecto del antialiasing." title="Efecto AA"></p><ol start=2><li></li></ol><h3 id=7-referencias><strong>7. Referencias</strong>
-<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation>Rasterization: a Practical Implementation</a></li><li><a href=https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/n>The barycentric conspiracy</a></li><li><a href=https://en.wikipedia.org/wiki/Spatial_anti-aliasing>Spatial anti-aliasing</a></li><li><a href="https://helpx.adobe.com/photoshop-elements/key-concepts/aliasing-anti-aliasing.html#:~:text=Anti-aliasing%20is%20the%20smoothing,make%20the%20edges%20appear%20smoother.">Aliasing & Anti-aliasing</a></li><li><a href=https://github.com/objetos/p5.quadrille.js/blob/main/examples/raster/sketch.js>Raster in p5.quadrille.js</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/a1e3ddf5b4e86e5c56164094b925fa2ecee3dac2 title="Last modified by Jrozou26092000 | June 28, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
+<a class=anchor href=#5-discusi%c3%b3n>#</a></h3><p>Fue muy interesante realizar este shader con todas estas opciones, sin embargo permanece como una incógnita el porqué después de determinado tiempo la función de generación de ruido deja de funcionar, provocando que el ruido se vuelve lineal y pierda la textura que existe al ejecutar el código inicialmente. Por otra parte se ve como para generar un ruido tan &ldquo;simple&rdquo; como es el de unos ladrillos, se necesita de muchas matemáticas, y cómo a pesar de que es un código más largo el del ruido simplex, es mucho más eficiente que el de gradiente, siendo el de gradiente tan corto. También vemos que hay otros tipos de ruido para generar otro tipo de texturas que son muy interesantes, pero no se alcanzaron a cubrir en este taller, y podrían servir como trabajo futuro estos son los ruidos celulares con el algoritmo de Voronoi o el movimiento fractal Browniano, capaces de generar formas como las alas de una libélula, o la textura de nubes y montañas.</p><h3 id=6-conclusión><strong>6. Conclusión</strong>
+<a class=anchor href=#6-conclusi%c3%b3n>#</a></h3><ol><li><p>Para generar cualquiera de las texturas que se utilizan en los videojuegos, que requieren estar recalculandose según luces y perspectiva y acciones de los jugadores se requiere de un gran esfuerzo matematico, no en vano se necesitan las GPUs para todo esto.</p></li><li><p>A pesar de que se necesitan muchas matematicas para hacer figuras más realistas, al trabajar con una cuadricula es facil dibujar patrones, el reto en estos casos, es como hacer patrones que puedan ser interesantes y utiles para determinadas aplicaciones.</p></li><li><p>Gracias a personas como Ken Perlin, es que hoy dia podemos disfrutar de efectos por comútador que nos dan los grandes exitos de ciencia ficción y al realizar este trabajo se puede notar el esfuerzo que requieren las herramientas usadas en estas peliculas.</p></li></ol><h3 id=7-referencias><strong>7. Referencias</strong>
+<a class=anchor href=#7-referencias>#</a></h3><ul><li><a href=https://thebookofshaders.com/>The book of shaders</a></li><li><a href=https://visualcomputing.github.io/VertexShaders/>VERTEX-SHADERS IN PROCESSING</a></li><li><a href=https://www.lighthouse3d.com/tutorials/glsl-tutorial/lighting/>GLSL Tutorial – Lighting</a></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/visualcomputing/showcase/commit/a1e3ddf5b4e86e5c56164094b925fa2ecee3dac2 title="Last modified by Jrozou26092000 | June 28, 2022" target=_blank rel=noopener><img src=/showcase/svg/calendar.svg class=book-icon alt=Calendar>
 <span>June 28, 2022</span></a></div></div><script>(function(){function e(n){const e=window.getSelection(),t=document.createRange();t.selectNodeContents(n),e.removeAllRanges(),e.addRange(t)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#procedural-texturing><strong>Procedural texturing</strong></a><ul><li><ul><li><a href=#1-introducción><strong>1. Introducción</strong></a></li><li><a href=#2-revisión-bibliográfica><strong>2. Revisión bibliográfica</strong></a></li><li><a href=#3-métodos><strong>3. Métodos</strong></a></li><li><a href=#4-resultados><strong>4. Resultados</strong></a></li><li><a href=#5-discusión><strong>5. Discusión</strong></a></li><li><a href=#6-conclusión><strong>6. Conclusión</strong></a></li><li><a href=#7-referencias><strong>7. Referencias</strong></a></li></ul></li></ul></li></ul></nav></div></aside></main></body></html>

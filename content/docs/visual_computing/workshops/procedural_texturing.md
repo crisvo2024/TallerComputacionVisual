@@ -207,7 +207,7 @@ void main() {
 ```
 #### **2.3 Iluminación**
 
-Para poder que un objeto se vea con una textura, es necesario el uso de luces, estas se reflejarán según la forma y el material, dando efectos de brillo y profundidad. Dentro del modelo de luces más comunmente utilizado encontramos las siguientes luces:
+Para poder que un objeto se vea con una textura, es necesario el uso de luces, estas se reflejarán según la forma y el material, dando efectos de brillo y profundidad. Dentro del modelo de luces más comúnmente utilizado encontramos las siguientes luces:
 - Difusa: 
 
 Luz reflejada por un objeto en todas las direcciones. Es lo que comúnmente llamamos el color de un objeto.
@@ -221,18 +221,20 @@ Es la luz que se refleja con más fuerza en una dirección determinada, comúnme
 
 El propio objeto emite luz.
 
-Para este taler se decidio usar un modelo de iluminación con point light. Esto significa que hay un punto emitiendo luz que es el que genera la iluminación en la escena.
+Para este taller se decidió usar un modelo de iluminación con point light. Esto significa que hay un punto emitiendo luz que es el que genera la iluminación en la escena.
 
 En este caso el vertex shader recibe una posición de luz y debe calcular la dirección de la luz para cada vértice. Se supone que la posición de la luz está en el espacio de la cámara. Una vez que movemos la posición de los vértices al mismo espacio, el cálculo de la dirección es sencillo:
 
 dirección de la luz = posición de la luz - posición del vértice.
 
-De esta forma ya podemos usar la ecuación de la luz difusa que es 
+De esta forma ya podemos usar la ecuación de la luz difusa que es
 luz difusa: I = dirección ∙ normal
+
 
 ### **3. Métodos**
 
-Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitio completarlo, por lo que solo se añadio una luz difusa desde el shader.
+Para llevar a cabo este ejercicio se llevó a cabo en primer lugar una revisión teórica de cada uno de los conceptos que envuelven la temática del proceso de procedural texturing. Para esto se jugo con la posiblidad de generar una textura de una pared de ladrillos desde el shader y darle algo de movimiento a este. Para realizar esto fue necesaria una investigación en cuanto a formas de generar imagenes de ruido para emular la rugocidad de los ladrillos, posteriormente, se implemetaron las diferentes opciones y se le añadio dinamismo al incluir como variable el tiempo, en forma del numero del frame actual, de esta forma se consigue que los ladrillos se empiecen a mover en la figura. Se tuvo la intención de añadir bump mapping para una comparación, pero el tiempo no nos permitió completarlo, por lo que solo se añadió una luz difusa desde el shader.
+
 ### **4. Resultados**
 
 A partir del estudio llevado a cabo se realizó el siguiente programa con el fin de visualizar el efecto del procedural texturing.
@@ -331,6 +333,13 @@ varying vec2 texcoords2;
 varying vec3 light_dir;
 varying vec3 eye;
 varying vec3 normal3;
+
+uniform float scale;
+uniform float speedFactor;
+uniform bool n0;
+uniform bool n1;
+uniform bool n2;
+uniform bool n3;
 
 float rand(vec2 n) {  
 	return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
@@ -443,23 +452,27 @@ float snoise(vec2 v) {
 
 void main (void) {
 
-    //cantidad de ladrillos
-    float scale = 20.;
-    //factor de velocidad
-    float speedFactor = 10.;
-    speedFactor /= 100.;
+    // cantidad de ladrillos
+    // float scale = 20.;
+    // factor de velocidad
+    // float speedFactor = 10.;
+    // speedFactor /= 100.;
     // ruido de textura
     vec2 positionVec4 = texcoords2;
     positionVec4.x += u_time/(scale/speedFactor);
-    // Value Noise
-    float n = noise(positionVec4*500.0)+0.2;
 
-    // Gradient Noise
-    // float n = noise2(positionVec4*200.0)+0.2;
+    float n = 1.;
 
-    // Simplex Noise
-    // float n = snoise(positionVec4*200.0)+0.2;
-
+    if(n1) {
+        // Value Noise
+        n = noise(positionVec4*500.0)+0.2;
+    } else if(n2) {
+        // Gradient Noise
+        n = noise2(positionVec4*200.0)+0.2;
+    } else if(n3) {
+        // Simplex Noise
+        n = snoise(positionVec4*200.0)+0.2;
+    }
     // forma de ladrillos
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
     st *= scale;
@@ -482,6 +495,7 @@ void main (void) {
     float intensity = max(dot(nor,l), 0.0);
     gl_FragColor = vec4(intensity, intensity, intensity, 1) * gl_FragColor;
 }
+
 ```
 {{< /details >}}
 
@@ -603,11 +617,11 @@ Fue muy interesante realizar este shader con todas estas opciones, sin embargo p
 
 ### **6. Conclusión**
 
-1. Para generar cualquiera de las texturas que se utilizan en los videojuegos, que requieren estar recalculandose según luces y perspectiva y acciones de los jugadores se requiere de un gran esfuerzo matematico, no en vano se necesitan las GPUs para todo esto.
+1. Para generar cualquiera de las texturas que se utilizan en los videojuegos, que requieren estar recalculando según luces y perspectiva y acciones de los jugadores se requiere de un gran esfuerzo matemático, no en vano se necesitan las GPUs para todo esto.
 
-2. A pesar de que se necesitan muchas matematicas para hacer figuras más realistas, al trabajar con una cuadricula es facil dibujar patrones, el reto en estos casos, es como hacer patrones que puedan ser interesantes y utiles para determinadas aplicaciones.
+2. A pesar de que se necesitan muchas matemáticas para hacer figuras más realistas, al trabajar con una cuadrícula es fácil dibujar patrones, el reto en estos casos, es como hacer patrones que puedan ser interesantes y útiles para determinadas aplicaciones.
 
-3. Gracias a personas como Ken Perlin, es que hoy dia podemos disfrutar de efectos por comútador que nos dan los grandes exitos de ciencia ficción y al realizar este trabajo se puede notar el esfuerzo que requieren las herramientas usadas en estas peliculas.
+3. Gracias a personas como Ken Perlin, es que hoy día podemos disfrutar de efectos por computador que nos dan los grandes éxitos de ciencia ficción y al realizar este trabajo se puede notar el esfuerzo que requieren las herramientas usadas en estas películas.
 
 ### **7. Referencias**
 

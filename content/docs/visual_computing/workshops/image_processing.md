@@ -12,7 +12,7 @@ El masking o la aplicación de máscaras de convolución juega un papel muy impo
 
 El marco teórico relacionado con las *máscaras convolucionales* ya fue desarrollado en un taller previo y se puede ver [aquí]({{< ref "/docs/visual_computing/workshops/illutions.md" >}} "Masking") dentro de la sección de *"Masking"*.
 
-Con respecto al desarrollo de la *herramienta de ampliación* de imágenes 
+Con respecto al desarrollo de la *herramienta de ampliación* de imágenes se tiene que la ampliación es el proceso de aumentar el tamaño aparente, no físico, de algo. Esta ampliación se cuantifica mediante un número calculado también llamado "aumento". Cuando este número es menor que uno, se refiere a una reducción de tamaño, a veces llamada minificación o desampliación. Normalmente, la ampliación está relacionada con el aumento de la escala de las imágenes para poder ver más detalles, aumentando la resolución, mediante el uso del microscopio, las técnicas de impresión o el procesamiento digital. En todos los casos, la ampliación de la imagen no cambia la perspectiva de la misma.
 
 Finalmente para la *herramienta de luminosidad* se llevó a cabo la conversión entre el modelo de color RGBA y los siguientes modelos de color:
 
@@ -960,3 +960,4 @@ Partiendo de los resultados obtenidos se puede evidenciar especialmente en el ca
 - [RGB TO HSL color conversion](https://www.rapidtables.com/convert/color/rgb-to-hsl.html)
 - [HSL & HSV - Wikipedia](https://en.wikipedia.org/wiki/HSL_and_HSV#Disadvantages)
 - [CIELAB color space - Wikipedia](https://en.wikipedia.org/wiki/CIELAB_color_space)
+- [Magnification](https://en.wikipedia.org/wiki/Magnification)
